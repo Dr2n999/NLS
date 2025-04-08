@@ -1,0 +1,208 @@
+# Applying the Algorithm to a Sphere function model
+
+Let's have an extra example. Here we aim to visualize a well-known mathematical function called the **Sphere function**, which is used frequently in optimization problems. It is defined as:
+
+$$
+f(x) = x_1^2 + x_2^2 + \dots + x_n^2
+$$
+
+Where $x$ represents the input vector, and each component $x_i$ is squared and summed. The Sphere function simply calculates how far a given point is from the origin (0, 0, …, 0) in multi-dimensional space.
+
+## Code Explanation
+
+-   We define the **Sphere function** (`s.function`) which calculates the sum of squares of the components of a vector `x`. For example, for two dimensions, if $x = (x_1, x_2)$, the function will calculate $x_1^2 + x_2^2$.
+
+-   We then create a grid of input values for $x$ and $y$ in a 2D space. This grid is used to compute the corresponding cost values (or Sphere function values) across the space.
+
+-   After calculating the cost values for all the grid points, we find the point where the Sphere function reaches its minimum (which is at the origin, where all the components of `x` are zero).
+
+-   Finally, we create a 3D surface plot using **Plotly**, which allows us to visualize the cost landscape of the Sphere function. The red dot on the plot represents the minimum cost, which corresponds to the point (0,0) in this example.
+
+## Example data
+
+This is a 3D plot of the Sphere function where the height (z-axis) shows the function's value at each point. The **red point** indicates the minimum cost point, which is the point where the Sphere function reaches its lowest value (at the origin).
+
+```{R}
+
+s.function <- function(x) {
+  return(sum(x^2))
+}
+
+
+x.range <- seq(-10, 10, by = 0.1)
+y.range <- seq(-10, 10, by = 0.1)
+
+
+cost.matrix <- matrix(NA, nrow = length(x.range), ncol = length(y.range))
+
+
+for (i in 1:length(x.range)) {
+  for (j in 1:length(y.range)) {
+    cost.matrix[i, j] <- s.function(c(x.range[i], y.range[j]))
+  }
+}
+
+
+rownames(cost.matrix) <- seq(-10, 10, by = .1) 
+colnames(cost.matrix) <- seq(-10, 10, by = .1) 
+
+
+min.cost <- min(cost.matrix)
+min.cost.pos <- which(cost.matrix == min.cost, arr.ind = TRUE)
+theta0.min <- rownames(cost.matrix)[min.cost.pos[1]]
+theta1.min <- colnames(cost.matrix)[min.cost.pos[2]]
+
+
+plot_ly(z = cost.matrix, type = "surface", 
+        x = as.numeric(colnames(cost.matrix)), 
+        y = as.numeric(rownames(cost.matrix))) %>%
+  add_trace(
+    type = "scatter3d", mode = "markers",
+    x = as.numeric(theta1.min), y = as.numeric(theta0.min), z = min.cost,
+    marker = list(size = 5, color = 'red')
+  ) %>%
+  layout(
+    scene = list(
+      xaxis = list(title = "X"),
+      yaxis = list(title = "X"),
+      zaxis = list(title = "f(X)")
+    )
+  )
+
+```
+
+------------------------------------------------------------------------
+
+## Optimization with the Algorithm
+
+Now, we implement the LM algorithm to minimize the Sphere function or find the values of $x$ that make $f(x)$ as small as possible. Here is the key concepts:
+
+-   **Sphere Function**: This is the function we're trying to minimize. It's the same function we used in the previous step.
+
+-   **Gradient**: The derivative of the Sphere function with respect to each input component $x_i$, which is used to find the direction of steepest descent. The gradient of the Sphere function is simply $2x$, meaning that at each point, the direction to move to minimize the function is directly opposite the value of the current point.
+
+-   **Jacobian**: The Jacobian matrix is a matrix of all the first-order partial derivatives of the function with respect to its parameters. In this case, the function is a sum of squares, so the Jacobian is simply a vector of partial derivatives.
+
+-   The algorithm iteratively updates the parameters (in this case, the values of $x$) using a combination of the gradient and a damping factor (denoted as $\mu$). The algorithm adjusts the damping factor at each step to ensure convergence to the minimum.
+
+-   The algorithm checks for **convergence** at each step by evaluating the change in the cost function and the convergence criteria as shown before, only I slightly modified the criteria for the given example yet the main algorithm remains untouched.
+
+------------------------------------------------------------------------
+
+## Applying the Algorithm
+
+-   We start with an initial guess for the parameters `w0 = (10, 10)`, which are far from the minimum of the Sphere function at (0, 0).
+
+-   The **LM.custom** function is applied to minimize the Sphere function starting from these initial values.
+
+-   After running the algorithm, we obtain the optimized parameter values, which should be close to (0, 0), the true minimum of the Sphere function.
+
+------------------------------------------------------------------------
+
+## Code Example
+
+```{r}
+LM.custom <- function(w0) {
+  w <- w.previous <- w0  
+  k <- 0  
+  feval <- 0
+  mu <- 1e-2  
+  ftol <- 1e-6
+  ptol <- 1e-6
+  
+  maxiter <- 200
+  maxfev <- 600
+
+  f <- function(x) {
+    return(sum(x^2))  
+  }
+
+  residual <- function(w) {
+    return(f(w))  
+  }
+
+  chi.squre.fn <- function(w) {
+    chi.sq <- residual(w)  
+    return(chi.sq)
+  }
+
+  norm.fn <- function(x) sqrt(sum(x^2))
+  initial.chisq <- previous.chisq <- chi.squre.fn(w)   
+
+  while (k < maxiter && feval < maxfev) {
+    J <- numDeriv::jacobian(f, w, method = "Richardson")  
+    r1 <- residual(w)  
+    Jr <- t(J) %*% r1  
+    feval <- feval + 1
+    
+    if (feval == maxfev) {
+      cat("Number of function evaluations reached: ", feval, "\n")
+      break
+    }
+    
+    JTJ <- t(J) %*% J + mu * diag(ncol(J))  
+    QR <- qr(JTJ)  
+    
+    JTJ.inv <- tryCatch({
+      qr.solve(JTJ)  
+    }, error = function(e) {
+      ginv(JTJ)  
+    })
+    
+    damp <- mu * diag(ncol(JTJ))  
+    dk <- JTJ.inv %*% Jr  
+    w1 <- w - dk 
+
+    chisq.new <- chi.squre.fn(w1) 
+    actual.relative.reduction <- abs(initial.chisq - chisq.new) / initial.chisq
+    predicted.relative.reduction <- p <- (previous.chisq - chisq.new) / abs(t(dk) %*% (damp %*% dk + Jr))
+    relative.error <- max(abs(w1 - w.previous)) / max(abs(w.previous))  
+    
+    convergence_result <- c()
+ 
+    convergence <- function() {
+      if (actual.relative.reduction < ftol & p < ftol) {
+        print(paste("ARD:", actual.relative.reduction, "PRD:", p))
+      } else  {
+        print(paste("RE:", relative.error))
+      } 
+    }
+  
+
+    if (actual.relative.reduction < ftol & p < ftol || relative.error < ptol) {
+      convergence_result <- convergence()
+      break
+    }
+
+    if (p > 0) {
+      mu <- max(mu / 9, 1e-7)  
+      w.previous <- w  
+      w <- w1 
+    } else { 
+      mu <- min(mu * 11, 1e7)  
+    }
+
+    previous.chisq <- chisq.new  
+    k <- k + 1  
+  }
+
+  result <- list(parameters = w, 
+                 iteration = k, 
+                 convergence.result = convergence())  
+  return(result)
+}
+
+```
+
+\
+We can run the code as follows.
+
+```{r}
+# Define the initial guess for the parameters
+w0 <- c(10, 10)
+
+# Apply the LM algorithm to minimize the Sphere function
+(LM.custom(w0))
+```
+
+The estimated parameters are close to (0, 0), while the iteration stopped because the maximum iteration limit of 200 cycles was reached. This means that the estimated parameters are only shown as a result, not because the algorithm converged.

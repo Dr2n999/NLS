@@ -1,0 +1,70 @@
+---
+title: "Non-linear regression"
+author: "Kyungmin In, GCCL"
+date: "2025-04-01"
+site: bookdown::bookdown_site
+documentclass: book
+bibliography: [book.bib, packages.bib]
+# url: your book url like https://bookdown.org/yihui/bookdown
+# cover-image: path to the social sharing image like images/cover.jpg
+description: |
+  This is a minimal example of using the bookdown package to write a book.
+  set in the _output.yml file.
+  The HTML output format for this example is bookdown::gitbook,
+link-citations: yes
+github-repo: rstudio/bookdown-demo
+editor_options: 
+  markdown: 
+---
+
+# Non-Linear Regression and Optimization Methods in LBA Data Analysis {.unnumbered}
+
+Non-linear regression is an essential tool for modeling complex data in fields such as biochemistry, immunology, and diagnostics. In particular, when applying Ligand binding assay (**LBA**), such as Enzyme-Linked Immunosorbent Assay (**ELISA**), Electrochemiluminescence Immunoassay (**ECLIA**) data, the relationship between the concentration of a target analyte and the measured signal is often non-linear due to the intricate biochemical interactions that occur during the assay.
+
+While linear regression models are typically used for simple linear relationships, ELISA data and other biological assays often require more sophisticated methods. The non-linear nature of the data necessitates using **non-linear regression techniques** to accurately model the underlying relationships. However, the challenge with non-linear regression lies in the fact that the relationship between variables cannot be directly expressed as a straight line, requiring iterative numerical methods to find the best-fitting model.
+
+## Key Optimization Methods in Non-Linear Regression {.unnumbered}
+
+The process of fitting a non-linear model to data involves finding the parameter values that minimize the difference between the predicted and observed data. The optimization methods used for this task can significantly affect the quality of the fit. Two popular techniques for solving non-linear regression problems are **gradient descent** and the **Gauss-Newton method**, both of which rely on iterative numerical optimization.
+
+-   **Gradient Descent**: Gradient descent is a first-order optimization algorithm that adjusts the parameters of the model iteratively to reduce the error (often represented as a cost or loss function). In each step, it moves in the direction opposite to the gradient of the cost function, with the size of the step determined by the learning rate. Although simple and intuitive, gradient descent can be slow, and it may struggle to converge to the global minimum if the cost function is complex or contains many local minima.
+
+-   **Gauss-Newton Method**: The Gauss-Newton method is an optimization algorithm that is particularly useful for least-squares problems, such as those encountered in non-linear regression. It approximates the Hessian matrix (second-order derivatives) using the Jacobian matrix (first-order derivatives), which simplifies the computation and speeds up convergence compared to gradient descent. The Gauss-Newton method is more efficient than gradient descent when the model is close to the true solution, but it can struggle with highly non-linear models or when the initial guess is far from the optimal solution.
+
+## The Levenberg-Marquardt Algorithm: A Hybrid Approach {.unnumbered}
+
+To overcome the limitations of those methods, the **Levenberg-Marquardt algorithm** (often referred to as **LM algorithm**) combines the advantages of both methods and has become a standard technique for solving non-linear least squares problems, including fitting LBA data.
+
+The Levenberg-Marquardt algorithm adjusts the optimization process by blending gradient descent and Gauss-Newton. The idea is to take the best aspects of both methods, making it more robust and capable of handling difficult optimization problem by introducing a damping parameter that\
+controls the balance between the gradient descent and Gauss-Newton steps.\
+When the parameters are far from the optimal solution, the algorithm behaves more like gradient descent (which is stable but slower), and when the parameters are closer to the optimal solution, it behaves more like Gauss-Newton (which is faster but more sensitive to starting points).
+
+Mathematically, the Levenberg-Marquardt update rule is given by:
+
+$$
+\theta_{\text{new}} = \theta_{\text{old}} +\left( J^T W J + \lambda I \right)^{-1} J^T  Wr
+ $$
+
+Where:
+
+-   $\theta_{old}$ is the current parameter estimates,
+
+-   $J$ is the Jacobian matrix of the residuals,
+
+-   $\mathbf{r}_i$, - $\lambda_i$ is the damping parameter that adjusts the step size,
+
+-   $I$ is the identity matrix, and
+
+-   $\mathbf{r}_i$ represents the residuals (the difference between the model's predictions and the observed data).
+
+The algorithm iteratively updates the parameters until the residuals are minimized, providing an accurate fit for non-linear models.
+
+## Why Should We Care About These Optimization Methods? {.unnumbered}
+
+Understanding and applying non-linear regression, along with methods like gradient descent, Gauss-Newton, and Levenberg-Marquardt, is essential for researchers working with complex experimental data. In the case of LBA, the accuracy of the data fit directly impacts the sensitivity and reliability of the assay results. Inaccurate model fitting can lead to misleading conclusions, especially when quantifying low concentrations of analytes.
+
+Moreover, the Levenberg-Marquardt algorithm's robustness makes it a popular choice in many scientific and engineering applications, from pharmacokinetics to machine learning. By mastering these optimization methods, researchers can ensure more accurate, efficient, and reliable data analysis.
+
+## Practical Implementation in R {.unnumbered}
+
+To provide a hands-on understanding of the Levenberg-Marquardt algorithm and its application to LBA assay data analysis, I will walk through an example using **custom R code**. This code demonstrates how to implement non-linear regression using the Levenberg-Marquardt method, optimizing the parameters of **a five-parameter logistic (5PL) model** commonly used for ELISA data. The goal is to offer readers deeper understanding of non-linear regression.

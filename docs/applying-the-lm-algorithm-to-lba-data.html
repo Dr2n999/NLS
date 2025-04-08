@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 6 Applying the LM Algorithm to LBA data | Non-linear regression</title>
+  <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
+set in the _output.yml file.
+The HTML output format for this example is bookdown::gitbook,</p>" />
+  <meta name="generator" content="bookdown 0.42 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 6 Applying the LM Algorithm to LBA data | Non-linear regression" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="<p>This is a minimal example of using the bookdown package to write a book.
+set in the _output.yml file.
+The HTML output format for this example is bookdown::gitbook,</p>" />
+  <meta name="github-repo" content="rstudio/bookdown-demo" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 6 Applying the LM Algorithm to LBA data | Non-linear regression" />
+  
+  <meta name="twitter:description" content="<p>This is a minimal example of using the bookdown package to write a book.
+set in the _output.yml file.
+The HTML output format for this example is bookdown::gitbook,</p>" />
+  
+
+<meta name="author" content="Kyungmin In, GCCL" />
+
+
+<meta name="date" content="2025-04-01" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="applying-the-algorithm-to-a-sphere-function-model.html"/>
+<link rel="next" href="evaluation-of-the-custom-code.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+<link href="libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet" />
+<script src="libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+<script src="libs/plotly-binding-4.10.4/plotly.js"></script>
+<script src="libs/typedarray-0.1/typedarray.min.js"></script>
+<link href="libs/crosstalk-1.2.1/css/crosstalk.min.css" rel="stylesheet" />
+<script src="libs/crosstalk-1.2.1/js/crosstalk.min.js"></script>
+<link href="libs/plotly-htmlwidgets-css-2.11.1/plotly-htmlwidgets.css" rel="stylesheet" />
+<script src="libs/plotly-main-2.11.1/plotly-latest.min.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Non-linear regression</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Non-Linear Regression and Optimization Methods in LBA Data Analysis</a>
+<ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#key-optimization-methods-in-non-linear-regression"><i class="fa fa-check"></i>Key Optimization Methods in Non-Linear Regression</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#the-levenberg-marquardt-algorithm-a-hybrid-approach"><i class="fa fa-check"></i>The Levenberg-Marquardt Algorithm: A Hybrid Approach</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#why-should-we-care-about-these-optimization-methods"><i class="fa fa-check"></i>Why Should We Care About These Optimization Methods?</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#practical-implementation-in-r"><i class="fa fa-check"></i>Practical Implementation in R</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="author.html"><a href="author.html"><i class="fa fa-check"></i>Author</a></li>
+<li class="chapter" data-level="1" data-path="the-gradient-descent-method.html"><a href="the-gradient-descent-method.html"><i class="fa fa-check"></i><b>1</b> The Gradient descent method</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="the-gradient-descent-method.html"><a href="the-gradient-descent-method.html#computation-of-the-chi-squared-function"><i class="fa fa-check"></i><b>1.1</b> Computation of the chi-squared function</a></li>
+<li class="chapter" data-level="1.2" data-path="the-gradient-descent-method.html"><a href="the-gradient-descent-method.html#computation-of-the-gradient"><i class="fa fa-check"></i><b>1.2</b> Computation of the gradient</a></li>
+<li class="chapter" data-level="1.3" data-path="the-gradient-descent-method.html"><a href="the-gradient-descent-method.html#the-parameter-updating"><i class="fa fa-check"></i><b>1.3</b> The parameter updating</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="the-gauss-newton-method.html"><a href="the-gauss-newton-method.html"><i class="fa fa-check"></i><b>2</b> The Gauss-Newton Method</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="the-gauss-newton-method.html"><a href="the-gauss-newton-method.html#computation-of-the-chi-squared-function-1"><i class="fa fa-check"></i><b>2.1</b> Computation of the chi-squared function</a></li>
+<li class="chapter" data-level="2.2" data-path="the-gauss-newton-method.html"><a href="the-gauss-newton-method.html#computation-of-the-gradient-1"><i class="fa fa-check"></i><b>2.2</b> Computation of the gradient</a></li>
+<li class="chapter" data-level="2.3" data-path="the-gauss-newton-method.html"><a href="the-gauss-newton-method.html#the-parameter-updating-1"><i class="fa fa-check"></i><b>2.3</b> The parameter updating</a></li>
+<li class="chapter" data-level="2.4" data-path="the-gauss-newton-method.html"><a href="the-gauss-newton-method.html#summary-and-comparison-to-gradient-descent"><i class="fa fa-check"></i><b>2.4</b> Summary and Comparison to Gradient Descent</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="levenberg-marquardt-lm-algorithm.html"><a href="levenberg-marquardt-lm-algorithm.html"><i class="fa fa-check"></i><b>3</b> Levenberg-Marquardt (LM) algorithm</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="levenberg-marquardt-lm-algorithm.html"><a href="levenberg-marquardt-lm-algorithm.html#the-damping-factor-lambda"><i class="fa fa-check"></i><b>3.1</b> The Damping Factor <span class="math inline">\(\lambda\)</span></a></li>
+<li class="chapter" data-level="3.2" data-path="levenberg-marquardt-lm-algorithm.html"><a href="levenberg-marquardt-lm-algorithm.html#advantages-of-the-lm-algorithm"><i class="fa fa-check"></i><b>3.2</b> Advantages of the LM Algorithm</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="applying-the-lm-algorithm-to-a-damped-oscillation-model.html"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html"><i class="fa fa-check"></i><b>4</b> Applying the LM Algorithm to a Damped Oscillation Model</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="applying-the-lm-algorithm-to-a-damped-oscillation-model.html"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#example-data"><i class="fa fa-check"></i><b>4.1</b> Example Data</a></li>
+<li class="chapter" data-level="4.2" data-path="applying-the-lm-algorithm-to-a-damped-oscillation-model.html"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#data-fitting-using-nlslm"><i class="fa fa-check"></i><b>4.2</b> Data fitting using nlsLM</a></li>
+<li class="chapter" data-level="4.3" data-path="applying-the-lm-algorithm-to-a-damped-oscillation-model.html"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#how-the-algorithm-works"><i class="fa fa-check"></i><b>4.3</b> How the Algorithm Works</a></li>
+<li class="chapter" data-level="4.4" data-path="applying-the-lm-algorithm-to-a-damped-oscillation-model.html"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#custom-implementation-of-the-algorithm"><i class="fa fa-check"></i><b>4.4</b> Custom Implementation of the Algorithm</a></li>
+<li class="chapter" data-level="4.5" data-path="applying-the-lm-algorithm-to-a-damped-oscillation-model.html"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#convergence-criteria-of-the-algorithm"><i class="fa fa-check"></i><b>4.5</b> Convergence Criteria of the Algorithm</a></li>
+<li class="chapter" data-level="4.6" data-path="applying-the-lm-algorithm-to-a-damped-oscillation-model.html"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#code-example"><i class="fa fa-check"></i><b>4.6</b> Code Example</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="applying-the-algorithm-to-a-sphere-function-model.html"><a href="applying-the-algorithm-to-a-sphere-function-model.html"><i class="fa fa-check"></i><b>5</b> Applying the Algorithm to a Sphere function model</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="applying-the-algorithm-to-a-sphere-function-model.html"><a href="applying-the-algorithm-to-a-sphere-function-model.html#code-explanation"><i class="fa fa-check"></i><b>5.1</b> Code Explanation</a></li>
+<li class="chapter" data-level="5.2" data-path="applying-the-algorithm-to-a-sphere-function-model.html"><a href="applying-the-algorithm-to-a-sphere-function-model.html#example-data-1"><i class="fa fa-check"></i><b>5.2</b> Example data</a></li>
+<li class="chapter" data-level="5.3" data-path="applying-the-algorithm-to-a-sphere-function-model.html"><a href="applying-the-algorithm-to-a-sphere-function-model.html#optimization-with-the-algorithm"><i class="fa fa-check"></i><b>5.3</b> Optimization with the Algorithm</a></li>
+<li class="chapter" data-level="5.4" data-path="applying-the-algorithm-to-a-sphere-function-model.html"><a href="applying-the-algorithm-to-a-sphere-function-model.html#applying-the-algorithm"><i class="fa fa-check"></i><b>5.4</b> Applying the Algorithm</a></li>
+<li class="chapter" data-level="5.5" data-path="applying-the-algorithm-to-a-sphere-function-model.html"><a href="applying-the-algorithm-to-a-sphere-function-model.html#code-example-1"><i class="fa fa-check"></i><b>5.5</b> Code Example</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="applying-the-lm-algorithm-to-lba-data.html"><a href="applying-the-lm-algorithm-to-lba-data.html"><i class="fa fa-check"></i><b>6</b> Applying the LM Algorithm to LBA data</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="applying-the-lm-algorithm-to-lba-data.html"><a href="applying-the-lm-algorithm-to-lba-data.html#pl-curve"><i class="fa fa-check"></i><b>6.1</b> 5 PL curve</a></li>
+<li class="chapter" data-level="6.2" data-path="applying-the-lm-algorithm-to-lba-data.html"><a href="applying-the-lm-algorithm-to-lba-data.html#data-set"><i class="fa fa-check"></i><b>6.2</b> Data set</a></li>
+<li class="chapter" data-level="6.3" data-path="applying-the-lm-algorithm-to-lba-data.html"><a href="applying-the-lm-algorithm-to-lba-data.html#initial-parameter-estimation"><i class="fa fa-check"></i><b>6.3</b> Initial parameter estimation</a></li>
+<li class="chapter" data-level="6.4" data-path="applying-the-lm-algorithm-to-lba-data.html"><a href="applying-the-lm-algorithm-to-lba-data.html#example-of-code"><i class="fa fa-check"></i><b>6.4</b> Example of Code</a></li>
+<li class="chapter" data-level="6.5" data-path="applying-the-lm-algorithm-to-lba-data.html"><a href="applying-the-lm-algorithm-to-lba-data.html#visualization-of-the-fitting-process"><i class="fa fa-check"></i><b>6.5</b> Visualization of the fitting process</a></li>
+<li class="chapter" data-level="6.6" data-path="applying-the-lm-algorithm-to-lba-data.html"><a href="applying-the-lm-algorithm-to-lba-data.html#result"><i class="fa fa-check"></i><b>6.6</b> Result</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="evaluation-of-the-custom-code.html"><a href="evaluation-of-the-custom-code.html"><i class="fa fa-check"></i><b>7</b> Evaluation of the custom code</a></li>
+<li class="chapter" data-level="" data-path="closing-remarks.html"><a href="closing-remarks.html"><i class="fa fa-check"></i>Closing Remarks</a></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Non-linear regression</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="applying-the-lm-algorithm-to-lba-data" class="section level1 hasAnchor" number="6">
+<h1><span class="header-section-number">Chapter 6</span> Applying the LM Algorithm to LBA data<a href="applying-the-lm-algorithm-to-lba-data.html#applying-the-lm-algorithm-to-lba-data" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>In this chapter, we’ll apply the LM algorithm to fit a 5 parameter logistic (5 PL) curve to LBA data, specifically focusing on <strong>calibration curve fitting</strong>.</p>
+<hr />
+<div id="pl-curve" class="section level2 hasAnchor" number="6.1">
+<h2><span class="header-section-number">6.1</span> 5 PL curve<a href="applying-the-lm-algorithm-to-lba-data.html#pl-curve" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The <strong>5PL curve</strong> is commonly used to describe non-linear relationships, such the one found in bioassay where the assay response changes as the concentration of a substance increases. The 5PL equation is:</p>
+<p><span class="math display">\[
+Response = D+ \frac{A-D}{\left(1+\left(\frac{x}{c}\right)^B \right)^G}
+\]</span></p>
+<table style="width:100%;">
+<colgroup>
+<col width="19%" />
+<col width="19%" />
+<col width="20%" />
+<col width="41%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Symbol</th>
+<th>Parameter</th>
+<th>Name</th>
+<th>Notice</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>D</td>
+<td>w1</td>
+<td>Infinite x asymptote</td>
+<td>The maximum response (upper asymptote)</td>
+</tr>
+<tr class="even">
+<td>B</td>
+<td>w2</td>
+<td>Slope/Hill</td>
+<td>Controls how steep the curve is (representing the rate of change of response)</td>
+</tr>
+<tr class="odd">
+<td>C</td>
+<td>w3</td>
+<td>Inflection point</td>
+<td>The concentration where the steepest change occurs.</td>
+</tr>
+<tr class="even">
+<td>A</td>
+<td>w4</td>
+<td>Small x asymptote</td>
+<td>The minimum response (lower asymptote)</td>
+</tr>
+<tr class="odd">
+<td>G</td>
+<td>w5</td>
+<td>Asymmetric factor</td>
+<td>Controls the symmetry of the curve (how “skewed” it is)</td>
+</tr>
+</tbody>
+</table>
+<p>If the assay response increases with concentration, the parameters are used as described. If the assay response decreases with increasing concentration, parameters A and D should be switched.</p>
+<hr />
+</div>
+<div id="data-set" class="section level2 hasAnchor" number="6.2">
+<h2><span class="header-section-number">6.2</span> Data set<a href="applying-the-lm-algorithm-to-lba-data.html#data-set" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>We begin with pseudo datasets containing the assay responses (OD values) of calibration standard samples. Each run includes 12 levels of calibration standard samples, with a total of over 100 runs. Each standard sample was measured in duplicate. The first 2 and the last 3 levels were not used for quantification but not excluded from the fitting process, as they help curve fitting. These are called <strong>anchor points</strong>. Below is an example of how to prepare and structure the data to make a curve fitting for each run:</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="applying-the-lm-algorithm-to-lba-data.html#cb22-1" tabindex="-1"></a>df_temp<span class="fl">.0</span> <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">here</span>(<span class="st">&quot;data&quot;</span>,<span class="st">&quot;cal.std.od.csv&quot;</span>), <span class="at">header =</span> F)</span>
+<span id="cb22-2"><a href="applying-the-lm-algorithm-to-lba-data.html#cb22-2" tabindex="-1"></a></span>
+<span id="cb22-3"><a href="applying-the-lm-algorithm-to-lba-data.html#cb22-3" tabindex="-1"></a>od <span class="ot">&lt;-</span> <span class="fu">c</span>()</span>
+<span id="cb22-4"><a href="applying-the-lm-algorithm-to-lba-data.html#cb22-4" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(df_temp<span class="fl">.0</span>)) {</span>
+<span id="cb22-5"><a href="applying-the-lm-algorithm-to-lba-data.html#cb22-5" tabindex="-1"></a>  od <span class="ot">&lt;-</span> <span class="fu">rbind</span>(od, <span class="fu">t</span>(df_temp<span class="fl">.0</span>[i,]))</span>
+<span id="cb22-6"><a href="applying-the-lm-algorithm-to-lba-data.html#cb22-6" tabindex="-1"></a>}</span>
+<span id="cb22-7"><a href="applying-the-lm-algorithm-to-lba-data.html#cb22-7" tabindex="-1"></a></span>
+<span id="cb22-8"><a href="applying-the-lm-algorithm-to-lba-data.html#cb22-8" tabindex="-1"></a>calib<span class="fl">.0</span> <span class="ot">&lt;-</span> <span class="fu">c</span>()</span>
+<span id="cb22-9"><a href="applying-the-lm-algorithm-to-lba-data.html#cb22-9" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">12</span>){</span>
+<span id="cb22-10"><a href="applying-the-lm-algorithm-to-lba-data.html#cb22-10" tabindex="-1"></a>  <span class="cf">if</span>(i <span class="sc">&lt;</span> <span class="dv">10</span>){</span>
+<span id="cb22-11"><a href="applying-the-lm-algorithm-to-lba-data.html#cb22-11" tabindex="-1"></a>    calib<span class="fl">.1</span> <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&quot;STD0&quot;</span>, i)</span>
+<span id="cb22-12"><a href="applying-the-lm-algorithm-to-lba-data.html#cb22-12" tabindex="-1"></a>    calib<span class="fl">.0</span> <span class="ot">&lt;-</span> <span class="fu">c</span>(calib<span class="fl">.0</span>, calib<span class="fl">.1</span>)</span>
+<span id="cb22-13"><a href="applying-the-lm-algorithm-to-lba-data.html#cb22-13" tabindex="-1"></a>  } <span class="cf">else</span>{</span>
+<span id="cb22-14"><a href="applying-the-lm-algorithm-to-lba-data.html#cb22-14" tabindex="-1"></a>    calib<span class="fl">.1</span> <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&quot;STD&quot;</span>, i)</span>
+<span id="cb22-15"><a href="applying-the-lm-algorithm-to-lba-data.html#cb22-15" tabindex="-1"></a>    calib<span class="fl">.0</span> <span class="ot">&lt;-</span> <span class="fu">c</span>(calib<span class="fl">.0</span>, calib<span class="fl">.1</span>)</span>
+<span id="cb22-16"><a href="applying-the-lm-algorithm-to-lba-data.html#cb22-16" tabindex="-1"></a>  }</span>
+<span id="cb22-17"><a href="applying-the-lm-algorithm-to-lba-data.html#cb22-17" tabindex="-1"></a>}</span>
+<span id="cb22-18"><a href="applying-the-lm-algorithm-to-lba-data.html#cb22-18" tabindex="-1"></a></span>
+<span id="cb22-19"><a href="applying-the-lm-algorithm-to-lba-data.html#cb22-19" tabindex="-1"></a>conc<span class="fl">.0</span> <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">10</span>, <span class="dv">15</span>, <span class="dv">30</span>, <span class="dv">60</span>, <span class="dv">80</span>, <span class="dv">100</span>, <span class="dv">150</span>, <span class="dv">200</span>, <span class="dv">400</span>, <span class="dv">800</span>, <span class="dv">1600</span>)</span>
+<span id="cb22-20"><a href="applying-the-lm-algorithm-to-lba-data.html#cb22-20" tabindex="-1"></a>rep<span class="fl">.0</span> <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>), <span class="at">each=</span><span class="dv">12</span>)</span>
+<span id="cb22-21"><a href="applying-the-lm-algorithm-to-lba-data.html#cb22-21" tabindex="-1"></a>run.no <span class="ot">&lt;-</span> <span class="fu">nrow</span>(df_temp<span class="fl">.0</span>)<span class="sc">/</span><span class="dv">2</span></span>
+<span id="cb22-22"><a href="applying-the-lm-algorithm-to-lba-data.html#cb22-22" tabindex="-1"></a></span>
+<span id="cb22-23"><a href="applying-the-lm-algorithm-to-lba-data.html#cb22-23" tabindex="-1"></a>calib <span class="ot">&lt;-</span> <span class="fu">rep</span>(calib<span class="fl">.0</span>, <span class="dv">2</span><span class="sc">*</span>run.no)</span>
+<span id="cb22-24"><a href="applying-the-lm-algorithm-to-lba-data.html#cb22-24" tabindex="-1"></a>conc  <span class="ot">&lt;-</span> <span class="fu">rep</span>(conc<span class="fl">.0</span>, <span class="dv">2</span><span class="sc">*</span>run.no)</span>
+<span id="cb22-25"><a href="applying-the-lm-algorithm-to-lba-data.html#cb22-25" tabindex="-1"></a>rep <span class="ot">&lt;-</span>   <span class="fu">rep</span>(rep<span class="fl">.0</span>, run.no)</span>
+<span id="cb22-26"><a href="applying-the-lm-algorithm-to-lba-data.html#cb22-26" tabindex="-1"></a>run <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fu">seq</span>(<span class="dv">1</span>, run.no), <span class="at">each=</span><span class="dv">24</span>)</span>
+<span id="cb22-27"><a href="applying-the-lm-algorithm-to-lba-data.html#cb22-27" tabindex="-1"></a>df_temp <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(calib, conc, rep, od, run)</span>
+<span id="cb22-28"><a href="applying-the-lm-algorithm-to-lba-data.html#cb22-28" tabindex="-1"></a><span class="fu">colnames</span>(df_temp) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;calb&quot;</span>, <span class="st">&quot;conc&quot;</span>, <span class="st">&quot;rep&quot;</span>, <span class="st">&quot;od&quot;</span>, <span class="st">&quot;run&quot;</span>)</span></code></pre></div>
+<p>The data structure is as shown below (it is called long form data).</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="applying-the-lm-algorithm-to-lba-data.html#cb23-1" tabindex="-1"></a><span class="fu">head</span>(df_temp, <span class="dv">30</span>)</span></code></pre></div>
+<pre><code>##        calb conc rep       od run
+## V1    STD01    5   1 0.032825   1
+## V2    STD02   10   1 0.040097   1
+## V3    STD03   15   1 0.071710   1
+## V4    STD04   30   1 0.193617   1
+## V5    STD05   60   1 0.319059   1
+## V6    STD06   80   1 0.495708   1
+## V7    STD07  100   1 0.595597   1
+## V8    STD08  150   1 0.871226   1
+## V9    STD09  200   1 1.411576   1
+## V10   STD10  400   1 1.575802   1
+## V11   STD11  800   1 2.375823   1
+## V12   STD12 1600   1 2.786388   1
+## V1.1  STD01    5   2 0.027876   1
+## V2.1  STD02   10   2 0.035754   1
+## V3.1  STD03   15   2 0.067872   1
+## V4.1  STD04   30   2 0.181901   1
+## V5.1  STD05   60   2 0.321483   1
+## V6.1  STD06   80   2 0.506717   1
+## V7.1  STD07  100   2 0.596607   1
+## V8.1  STD08  150   2 0.854561   1
+## V9.1  STD09  200   2 1.517323   1
+## V10.1 STD10  400   2 1.842644   1
+## V11.1 STD11  800   2 2.534292   1
+## V12.1 STD12 1600   2 3.490257   1
+## V1.2  STD01    5   1 0.040804   2
+## V2.2  STD02   10   1 0.039087   2
+## V3.2  STD03   15   1 0.063529   2
+## V4.2  STD04   30   1 0.140289   2
+## V5.2  STD05   60   1 0.321988   2
+## V6.2  STD06   80   1 0.430866   2</code></pre>
+<hr />
+</div>
+<div id="initial-parameter-estimation" class="section level2 hasAnchor" number="6.3">
+<h2><span class="header-section-number">6.3</span> Initial parameter estimation<a href="applying-the-lm-algorithm-to-lba-data.html#initial-parameter-estimation" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Before fitting the 5PL curve, we need to estimate the initial values for the parameters.The initial values will also be directly estimated from the calibration standard sample data.Here’s how to compute them:</p>
+<ul>
+<li>w1: average of the maximum assay response (Max)</li>
+<li>w4: average of the minimum assay response (Min)</li>
+</ul>
+<p>Next, we calculate the logit transformation to linearize the data:</p>
+<p><span class="math display">\[ Logit(Y) = ln  \left( \frac{Y-Min}{Max-Y}\right)\]</span></p>
+<p>We then fit a simple linear model using the transformed data and estimate the parameters:</p>
+<p><span class="math display">\[ logit(y) = intercept \ + slope*ln(X) \]</span> and,</p>
+<ul>
+<li><p>w2: abs(slope)</p></li>
+<li><p>w3: EXP(-intercept / slope)</p></li>
+<li><p>w5: 1</p></li>
+</ul>
+<p>We can automatically compute parameters values for each run by running the following code:</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="applying-the-lm-algorithm-to-lba-data.html#cb25-1" tabindex="-1"></a>sumStart <span class="ot">&lt;-</span> <span class="cf">function</span>(rawdata){</span>
+<span id="cb25-2"><a href="applying-the-lm-algorithm-to-lba-data.html#cb25-2" tabindex="-1"></a>  df_temp<span class="fl">.0</span> <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">run=</span><span class="fu">unique</span>(rawdata<span class="sc">$</span>run), <span class="at">Max =</span> <span class="cn">NA</span>, <span class="at">Slope =</span> <span class="cn">NA</span>, <span class="at">C =</span> <span class="cn">NA</span>, <span class="at">Min =</span> <span class="cn">NA</span>, <span class="at">M=</span> <span class="cn">NA</span>) </span>
+<span id="cb25-3"><a href="applying-the-lm-algorithm-to-lba-data.html#cb25-3" tabindex="-1"></a>  run.list <span class="ot">&lt;-</span> <span class="fu">unique</span>(rawdata<span class="sc">$</span>run)</span>
+<span id="cb25-4"><a href="applying-the-lm-algorithm-to-lba-data.html#cb25-4" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> run.list) {</span>
+<span id="cb25-5"><a href="applying-the-lm-algorithm-to-lba-data.html#cb25-5" tabindex="-1"></a>    df_temp.i <span class="ot">&lt;-</span> rawdata[rawdata<span class="sc">$</span>run <span class="sc">==</span> i, ]</span>
+<span id="cb25-6"><a href="applying-the-lm-algorithm-to-lba-data.html#cb25-6" tabindex="-1"></a>    </span>
+<span id="cb25-7"><a href="applying-the-lm-algorithm-to-lba-data.html#cb25-7" tabindex="-1"></a>    max <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">c</span>(df_temp.i<span class="sc">$</span>od[df_temp.i<span class="sc">$</span>rep <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span> df_temp.i<span class="sc">$</span>conc<span class="sc">==</span><span class="fu">max</span>(df_temp.i<span class="sc">$</span>conc)], df_temp.i<span class="sc">$</span>od[df_temp.i<span class="sc">$</span>rep <span class="sc">==</span> <span class="dv">2</span> <span class="sc">&amp;</span> df_temp.i<span class="sc">$</span>conc<span class="sc">==</span><span class="fu">max</span>(df_temp.i<span class="sc">$</span>conc)]))    </span>
+<span id="cb25-8"><a href="applying-the-lm-algorithm-to-lba-data.html#cb25-8" tabindex="-1"></a>    min <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">c</span>(df_temp.i<span class="sc">$</span>od[df_temp.i<span class="sc">$</span>rep <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span> df_temp.i<span class="sc">$</span>conc<span class="sc">==</span><span class="fu">min</span>(df_temp.i<span class="sc">$</span>conc)], df_temp.i<span class="sc">$</span>od[df_temp.i<span class="sc">$</span>rep <span class="sc">==</span> <span class="dv">2</span> <span class="sc">&amp;</span> df_temp.i<span class="sc">$</span>conc<span class="sc">==</span><span class="fu">min</span>(df_temp.i<span class="sc">$</span>conc)]))  </span>
+<span id="cb25-9"><a href="applying-the-lm-algorithm-to-lba-data.html#cb25-9" tabindex="-1"></a>    df_temp.i<span class="sc">$</span>logit.y <span class="ot">&lt;-</span> <span class="fu">log</span>((df_temp.i<span class="sc">$</span>od<span class="sc">-</span>min)<span class="sc">/</span>(max<span class="sc">-</span>df_temp.i<span class="sc">$</span>od))</span>
+<span id="cb25-10"><a href="applying-the-lm-algorithm-to-lba-data.html#cb25-10" tabindex="-1"></a>    df_temp.i<span class="sc">$</span>logit.y[<span class="fu">is.nan</span>(df_temp.i<span class="sc">$</span>logit.y)<span class="sc">|</span><span class="fu">is.infinite</span>(df_temp.i<span class="sc">$</span>logit.y)] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb25-11"><a href="applying-the-lm-algorithm-to-lba-data.html#cb25-11" tabindex="-1"></a>    model <span class="ot">&lt;-</span> <span class="fu">lm</span>(logit.y<span class="sc">~</span><span class="fu">log</span>(conc), df_temp.i)</span>
+<span id="cb25-12"><a href="applying-the-lm-algorithm-to-lba-data.html#cb25-12" tabindex="-1"></a>    slope <span class="ot">&lt;-</span> <span class="fu">coef</span>(model)[[<span class="dv">2</span>]]</span>
+<span id="cb25-13"><a href="applying-the-lm-algorithm-to-lba-data.html#cb25-13" tabindex="-1"></a>    B <span class="ot">&lt;-</span> <span class="fu">abs</span>(slope)</span>
+<span id="cb25-14"><a href="applying-the-lm-algorithm-to-lba-data.html#cb25-14" tabindex="-1"></a>    ed50 <span class="ot">&lt;-</span> <span class="fu">exp</span>(<span class="sc">-</span><span class="fu">coef</span>(model)[[<span class="dv">1</span>]]<span class="sc">/</span>slope)</span>
+<span id="cb25-15"><a href="applying-the-lm-algorithm-to-lba-data.html#cb25-15" tabindex="-1"></a> </span>
+<span id="cb25-16"><a href="applying-the-lm-algorithm-to-lba-data.html#cb25-16" tabindex="-1"></a>    df_temp<span class="fl">.0</span><span class="sc">$</span>Max[df_temp<span class="fl">.0</span><span class="sc">$</span>run <span class="sc">==</span> i] <span class="ot">&lt;-</span> max</span>
+<span id="cb25-17"><a href="applying-the-lm-algorithm-to-lba-data.html#cb25-17" tabindex="-1"></a>    df_temp<span class="fl">.0</span><span class="sc">$</span>Min[df_temp<span class="fl">.0</span><span class="sc">$</span>run <span class="sc">==</span> i] <span class="ot">&lt;-</span> min</span>
+<span id="cb25-18"><a href="applying-the-lm-algorithm-to-lba-data.html#cb25-18" tabindex="-1"></a>    df_temp<span class="fl">.0</span><span class="sc">$</span>C[df_temp<span class="fl">.0</span><span class="sc">$</span>run <span class="sc">==</span> i] <span class="ot">&lt;-</span> ed50</span>
+<span id="cb25-19"><a href="applying-the-lm-algorithm-to-lba-data.html#cb25-19" tabindex="-1"></a>    df_temp<span class="fl">.0</span><span class="sc">$</span>Slope[df_temp<span class="fl">.0</span><span class="sc">$</span>run <span class="sc">==</span> i] <span class="ot">&lt;-</span> B</span>
+<span id="cb25-20"><a href="applying-the-lm-algorithm-to-lba-data.html#cb25-20" tabindex="-1"></a>    df_temp<span class="fl">.0</span><span class="sc">$</span>M[df_temp<span class="fl">.0</span><span class="sc">$</span>run <span class="sc">==</span> i] <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb25-21"><a href="applying-the-lm-algorithm-to-lba-data.html#cb25-21" tabindex="-1"></a>    }</span>
+<span id="cb25-22"><a href="applying-the-lm-algorithm-to-lba-data.html#cb25-22" tabindex="-1"></a>  df_temp<span class="fl">.0</span></span>
+<span id="cb25-23"><a href="applying-the-lm-algorithm-to-lba-data.html#cb25-23" tabindex="-1"></a>}</span>
+<span id="cb25-24"><a href="applying-the-lm-algorithm-to-lba-data.html#cb25-24" tabindex="-1"></a></span>
+<span id="cb25-25"><a href="applying-the-lm-algorithm-to-lba-data.html#cb25-25" tabindex="-1"></a>df_start <span class="ot">&lt;-</span> <span class="fu">sumStart</span>(df_temp)</span></code></pre></div>
+<p>As the result, the initial parameters for each run will be constructed as shown below.</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="applying-the-lm-algorithm-to-lba-data.html#cb26-1" tabindex="-1"></a><span class="fu">head</span>(df_start, <span class="dv">10</span>)</span></code></pre></div>
+<pre><code>##    run      Max    Slope        C        Min M
+## 1    1 3.138323 1.559031 293.7739  0.0303505 1
+## 2    2 3.250432 1.687841 288.8220  0.0391880 1
+## 3    3 3.309871 1.605703 250.8145 -0.0742350 1
+## 4    4 3.553180 1.563305 270.0125  0.0263610 1
+## 5    5 3.779066 1.499061 298.6959  0.0225735 1
+## 6    6 3.568785 1.781262 243.4372  0.0254520 1
+## 7    7 3.618577 1.675017 224.6187  0.0312090 1
+## 8    8 3.452584 1.596580 242.7640  0.0289365 1
+## 9    9 3.094943 1.517485 366.1966  0.0175235 1
+## 10  10 3.070198 1.507721 315.1467  0.0210080 1</code></pre>
+<hr />
+</div>
+<div id="example-of-code" class="section level2 hasAnchor" number="6.4">
+<h2><span class="header-section-number">6.4</span> Example of Code<a href="applying-the-lm-algorithm-to-lba-data.html#example-of-code" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Here is my custom code to apply the LM algorithm to 5PL curve fitting. This code not only fits the data (optimization of parameters) but also saves useful information obtained from each iteration, specifically to visualize the iteration process so we can see how <strong>a calibration curve</strong> fits the data (refer to the codes marked with #) .</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-1" tabindex="-1"></a>LM.custom <span class="ot">&lt;-</span> <span class="cf">function</span>(w0, data, run) {</span>
+<span id="cb28-2"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-2" tabindex="-1"></a>  w <span class="ot">&lt;-</span>  w.previous <span class="ot">&lt;-</span> w0  </span>
+<span id="cb28-3"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-3" tabindex="-1"></a>  k <span class="ot">&lt;-</span> <span class="dv">0</span> </span>
+<span id="cb28-4"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-4" tabindex="-1"></a>  feval <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb28-5"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-5" tabindex="-1"></a>  mu <span class="ot">&lt;-</span> <span class="fl">1e-2</span>  </span>
+<span id="cb28-6"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-6" tabindex="-1"></a>  ftol <span class="ot">&lt;-</span> <span class="fl">1e-6</span></span>
+<span id="cb28-7"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-7" tabindex="-1"></a>  ptol <span class="ot">&lt;-</span> <span class="fl">1e-6</span></span>
+<span id="cb28-8"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-8" tabindex="-1"></a>  gtol <span class="ot">&lt;-</span> <span class="dv">0</span>  </span>
+<span id="cb28-9"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-9" tabindex="-1"></a>  maxiter <span class="ot">&lt;-</span> <span class="dv">200</span></span>
+<span id="cb28-10"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-10" tabindex="-1"></a>  maxfev <span class="ot">&lt;-</span> <span class="dv">600</span></span>
+<span id="cb28-11"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-11" tabindex="-1"></a>  </span>
+<span id="cb28-12"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-12" tabindex="-1"></a>  y <span class="ot">&lt;-</span> data<span class="sc">$</span>od[data<span class="sc">$</span>run <span class="sc">==</span> run]</span>
+<span id="cb28-13"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-13" tabindex="-1"></a>  x_data <span class="ot">&lt;-</span> <span class="fu">unique</span>(data<span class="sc">$</span>conc)</span>
+<span id="cb28-14"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-14" tabindex="-1"></a>  n <span class="ot">&lt;-</span> <span class="fu">length</span>(x_data)</span>
+<span id="cb28-15"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-15" tabindex="-1"></a>  df_temp <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="fu">unique</span>(data<span class="sc">$</span>conc), <span class="at">od =</span> y)</span>
+<span id="cb28-16"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-16" tabindex="-1"></a>  </span>
+<span id="cb28-17"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-17" tabindex="-1"></a>  f <span class="ot">&lt;-</span> <span class="cf">function</span>(w0) {</span>
+<span id="cb28-18"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-18" tabindex="-1"></a>    model <span class="ot">&lt;-</span> w0[<span class="dv">1</span>] <span class="sc">+</span> (w0[<span class="dv">4</span>] <span class="sc">-</span> w0[<span class="dv">1</span>]) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> (df_temp<span class="sc">$</span>x <span class="sc">/</span> w0[<span class="dv">3</span>])<span class="sc">^</span>w0[<span class="dv">2</span>])<span class="sc">^</span>w0[<span class="dv">5</span>]</span>
+<span id="cb28-19"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-19" tabindex="-1"></a>    <span class="fu">return</span>(model)</span>
+<span id="cb28-20"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-20" tabindex="-1"></a>  }</span>
+<span id="cb28-21"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-21" tabindex="-1"></a></span>
+<span id="cb28-22"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-22" tabindex="-1"></a>  chi.squre.fn <span class="ot">&lt;-</span> <span class="cf">function</span>(w) {</span>
+<span id="cb28-23"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-23" tabindex="-1"></a>    chi.sq <span class="ot">&lt;-</span> <span class="fu">sum</span>((y <span class="sc">-</span> <span class="fu">f</span>(w))<span class="sc">^</span><span class="dv">2</span>)  </span>
+<span id="cb28-24"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-24" tabindex="-1"></a>    <span class="fu">return</span>(chi.sq)</span>
+<span id="cb28-25"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-25" tabindex="-1"></a>  }</span>
+<span id="cb28-26"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-26" tabindex="-1"></a>  </span>
+<span id="cb28-27"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-27" tabindex="-1"></a>  norm.fn <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="fu">sqrt</span>(<span class="fu">sum</span>(x<span class="sc">^</span><span class="dv">2</span>))</span>
+<span id="cb28-28"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-28" tabindex="-1"></a>  initial.chisq <span class="ot">&lt;-</span> previous.chisq <span class="ot">&lt;-</span> <span class="fu">chi.squre.fn</span>(w)</span>
+<span id="cb28-29"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-29" tabindex="-1"></a></span>
+<span id="cb28-30"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-30" tabindex="-1"></a>  calculate.cosine.angles <span class="ot">&lt;-</span> <span class="cf">function</span>(y, w) {</span>
+<span id="cb28-31"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-31" tabindex="-1"></a>    r <span class="ot">&lt;-</span> y <span class="sc">-</span> <span class="fu">f</span>(w)  </span>
+<span id="cb28-32"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-32" tabindex="-1"></a>    J <span class="ot">&lt;-</span> numDeriv<span class="sc">::</span><span class="fu">jacobian</span>(f, w)  </span>
+<span id="cb28-33"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-33" tabindex="-1"></a>    </span>
+<span id="cb28-34"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-34" tabindex="-1"></a>    norm.r <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">sum</span>(r<span class="sc">^</span><span class="dv">2</span>)) </span>
+<span id="cb28-35"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-35" tabindex="-1"></a>    cosine.angles <span class="ot">&lt;-</span> <span class="fu">numeric</span>(<span class="fu">ncol</span>(J))  </span>
+<span id="cb28-36"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-36" tabindex="-1"></a></span>
+<span id="cb28-37"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-37" tabindex="-1"></a>    <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(J)) {</span>
+<span id="cb28-38"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-38" tabindex="-1"></a>      J.col <span class="ot">&lt;-</span> J[, i]  </span>
+<span id="cb28-39"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-39" tabindex="-1"></a>      norm.J.col <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">sum</span>(J.col<span class="sc">^</span><span class="dv">2</span>))  </span>
+<span id="cb28-40"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-40" tabindex="-1"></a>      dot.product <span class="ot">&lt;-</span> <span class="fu">sum</span>(J.col <span class="sc">*</span> r)</span>
+<span id="cb28-41"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-41" tabindex="-1"></a>      cosine.angles[i] <span class="ot">&lt;-</span> dot.product <span class="sc">/</span> (norm.J.col <span class="sc">*</span> norm.r)</span>
+<span id="cb28-42"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-42" tabindex="-1"></a>    }</span>
+<span id="cb28-43"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-43" tabindex="-1"></a>    </span>
+<span id="cb28-44"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-44" tabindex="-1"></a>    <span class="fu">return</span>(cosine.angles)</span>
+<span id="cb28-45"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-45" tabindex="-1"></a>  }</span>
+<span id="cb28-46"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-46" tabindex="-1"></a></span>
+<span id="cb28-47"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-47" tabindex="-1"></a>  df_animation <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">iteration =</span> <span class="fu">integer</span>(<span class="dv">0</span>), <span class="at">x =</span> <span class="fu">numeric</span>(<span class="dv">0</span>), <span class="at">fitted.y =</span> <span class="fu">numeric</span>(<span class="dv">0</span>), <span class="at">od =</span> <span class="fu">numeric</span>(<span class="dv">0</span>)) <span class="co">#</span></span>
+<span id="cb28-48"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-48" tabindex="-1"></a></span>
+<span id="cb28-49"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-49" tabindex="-1"></a>  <span class="cf">while</span> (k <span class="sc">&lt;</span> maxiter <span class="sc">&amp;&amp;</span> feval <span class="sc">&lt;</span> maxfev) {</span>
+<span id="cb28-50"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-50" tabindex="-1"></a>    J <span class="ot">&lt;-</span> numDeriv<span class="sc">::</span><span class="fu">jacobian</span>(f, w) </span>
+<span id="cb28-51"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-51" tabindex="-1"></a>    r1 <span class="ot">&lt;-</span> y <span class="sc">-</span> <span class="fu">f</span>(w)  </span>
+<span id="cb28-52"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-52" tabindex="-1"></a>    Jr <span class="ot">&lt;-</span> <span class="fu">t</span>(J) <span class="sc">%*%</span> r1</span>
+<span id="cb28-53"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-53" tabindex="-1"></a>    feval <span class="ot">&lt;-</span> feval <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb28-54"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-54" tabindex="-1"></a></span>
+<span id="cb28-55"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-55" tabindex="-1"></a>    <span class="cf">if</span> (feval <span class="sc">==</span> maxfev) {</span>
+<span id="cb28-56"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-56" tabindex="-1"></a>      <span class="fu">cat</span>(<span class="st">&quot;Number of function evaluations reached: &quot;</span>, feval, <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb28-57"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-57" tabindex="-1"></a>      <span class="cf">break</span></span>
+<span id="cb28-58"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-58" tabindex="-1"></a>    }</span>
+<span id="cb28-59"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-59" tabindex="-1"></a></span>
+<span id="cb28-60"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-60" tabindex="-1"></a>    JTJ <span class="ot">&lt;-</span> <span class="fu">t</span>(J) <span class="sc">%*%</span> J <span class="sc">+</span> mu <span class="sc">*</span> <span class="fu">diag</span>(<span class="fu">ncol</span>(J))  </span>
+<span id="cb28-61"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-61" tabindex="-1"></a>    QR <span class="ot">&lt;-</span> <span class="fu">qr</span>(JTJ)</span>
+<span id="cb28-62"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-62" tabindex="-1"></a>    </span>
+<span id="cb28-63"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-63" tabindex="-1"></a>    damp <span class="ot">&lt;-</span> mu <span class="sc">*</span> <span class="fu">diag</span>(<span class="fu">ncol</span>(JTJ))</span>
+<span id="cb28-64"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-64" tabindex="-1"></a></span>
+<span id="cb28-65"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-65" tabindex="-1"></a>    </span>
+<span id="cb28-66"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-66" tabindex="-1"></a>    JTJ.inv <span class="ot">&lt;-</span> <span class="fu">tryCatch</span>({</span>
+<span id="cb28-67"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-67" tabindex="-1"></a>      <span class="fu">qr.solve</span>(JTJ)</span>
+<span id="cb28-68"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-68" tabindex="-1"></a>    }, <span class="at">error =</span> <span class="cf">function</span>(e) {</span>
+<span id="cb28-69"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-69" tabindex="-1"></a>      <span class="fu">ginv</span>(JTJ)</span>
+<span id="cb28-70"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-70" tabindex="-1"></a>    })</span>
+<span id="cb28-71"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-71" tabindex="-1"></a></span>
+<span id="cb28-72"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-72" tabindex="-1"></a>    dk <span class="ot">&lt;-</span> JTJ.inv <span class="sc">%*%</span> Jr</span>
+<span id="cb28-73"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-73" tabindex="-1"></a>    w1 <span class="ot">&lt;-</span> w <span class="sc">+</span> dk</span>
+<span id="cb28-74"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-74" tabindex="-1"></a></span>
+<span id="cb28-75"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-75" tabindex="-1"></a>    chisq.new <span class="ot">&lt;-</span> <span class="fu">chi.squre.fn</span>(w1)</span>
+<span id="cb28-76"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-76" tabindex="-1"></a>    actual.relative.reduction <span class="ot">&lt;-</span> <span class="fu">abs</span>( previous.chisq <span class="sc">-</span> chisq.new) <span class="sc">/</span>  previous.chisq</span>
+<span id="cb28-77"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-77" tabindex="-1"></a>    predicted.relative.reduction <span class="ot">&lt;-</span> p <span class="ot">&lt;-</span>  (previous.chisq <span class="sc">-</span> chisq.new) <span class="sc">/</span> <span class="fu">abs</span>(<span class="fu">t</span>(dk) <span class="sc">%*%</span> (damp <span class="sc">%*%</span> dk <span class="sc">+</span> Jr))</span>
+<span id="cb28-78"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-78" tabindex="-1"></a>    relative.error <span class="ot">&lt;-</span> <span class="fu">max</span>(<span class="fu">abs</span>(w1 <span class="sc">-</span> w.previous)) <span class="sc">/</span> <span class="fu">max</span>(<span class="fu">abs</span>(w.previous))</span>
+<span id="cb28-79"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-79" tabindex="-1"></a>    cosine.angles <span class="ot">&lt;-</span> <span class="fu">calculate.cosine.angles</span>(y, w)</span>
+<span id="cb28-80"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-80" tabindex="-1"></a>  </span>
+<span id="cb28-81"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-81" tabindex="-1"></a>    convergence.result <span class="ot">&lt;-</span> <span class="fu">c</span>()</span>
+<span id="cb28-82"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-82" tabindex="-1"></a>    convergence <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
+<span id="cb28-83"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-83" tabindex="-1"></a>      <span class="cf">if</span> (actual.relative.reduction <span class="sc">&lt;</span> ftol <span class="sc">&amp;</span> p <span class="sc">&lt;</span> ftol) {</span>
+<span id="cb28-84"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-84" tabindex="-1"></a>        convergence.result <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="st">&quot;ARD:&quot;</span>, actual.relative.reduction, <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>, <span class="st">&quot;PRD:&quot;</span>, p )</span>
+<span id="cb28-85"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-85" tabindex="-1"></a>      } <span class="cf">else</span> <span class="cf">if</span> (relative.error <span class="sc">&lt;</span> ptol) {</span>
+<span id="cb28-86"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-86" tabindex="-1"></a>        convergence.result <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="st">&quot;RE:&quot;</span>, relative.error)</span>
+<span id="cb28-87"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-87" tabindex="-1"></a>      } <span class="cf">else</span>  {</span>
+<span id="cb28-88"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-88" tabindex="-1"></a>        convergence.result <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="st">&quot;CA:&quot;</span>, cosine.angles)</span>
+<span id="cb28-89"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-89" tabindex="-1"></a>      } </span>
+<span id="cb28-90"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-90" tabindex="-1"></a>    }</span>
+<span id="cb28-91"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-91" tabindex="-1"></a>    </span>
+<span id="cb28-92"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-92" tabindex="-1"></a>    convergence.result <span class="ot">&lt;-</span> <span class="fu">c</span>()</span>
+<span id="cb28-93"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-93" tabindex="-1"></a>    </span>
+<span id="cb28-94"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-94" tabindex="-1"></a>    <span class="cf">if</span> (actual.relative.reduction <span class="sc">&lt;</span> ftol <span class="sc">&amp;</span> p <span class="sc">&lt;</span> ftol <span class="sc">||</span> relative.error <span class="sc">&lt;</span> ptol <span class="sc">||</span> <span class="fu">max</span>(<span class="fu">abs</span>(cosine.angles)) <span class="sc">&lt;</span> gtol ) {</span>
+<span id="cb28-95"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-95" tabindex="-1"></a>     convergence.result <span class="ot">&lt;-</span> <span class="fu">convergence</span>()</span>
+<span id="cb28-96"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-96" tabindex="-1"></a>     <span class="fu">print</span>(convergence.result)</span>
+<span id="cb28-97"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-97" tabindex="-1"></a>     <span class="fu">print</span>(w)</span>
+<span id="cb28-98"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-98" tabindex="-1"></a>     <span class="cf">break</span> </span>
+<span id="cb28-99"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-99" tabindex="-1"></a>    }</span>
+<span id="cb28-100"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-100" tabindex="-1"></a>    </span>
+<span id="cb28-101"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-101" tabindex="-1"></a>    </span>
+<span id="cb28-102"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-102" tabindex="-1"></a>    <span class="cf">if</span> (p <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb28-103"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-103" tabindex="-1"></a>      mu <span class="ot">&lt;-</span> <span class="fu">max</span>(mu <span class="sc">/</span> <span class="dv">9</span>, <span class="fl">1e-10</span>)</span>
+<span id="cb28-104"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-104" tabindex="-1"></a>      w_previous <span class="ot">&lt;-</span> w </span>
+<span id="cb28-105"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-105" tabindex="-1"></a>      w <span class="ot">&lt;-</span> w1  </span>
+<span id="cb28-106"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-106" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb28-107"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-107" tabindex="-1"></a>      mu <span class="ot">&lt;-</span> <span class="fu">min</span>(mu <span class="sc">*</span> <span class="dv">11</span>, <span class="fl">1e10</span>)  </span>
+<span id="cb28-108"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-108" tabindex="-1"></a>    }</span>
+<span id="cb28-109"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-109" tabindex="-1"></a>     previous.chisq <span class="ot">&lt;-</span> chisq.new  </span>
+<span id="cb28-110"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-110" tabindex="-1"></a>     k <span class="ot">&lt;-</span> k <span class="sc">+</span> <span class="dv">1</span>  </span>
+<span id="cb28-111"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-111" tabindex="-1"></a></span>
+<span id="cb28-112"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-112" tabindex="-1"></a>    </span>
+<span id="cb28-113"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-113" tabindex="-1"></a>    fitted.y <span class="ot">&lt;-</span> <span class="fu">f</span>(w) <span class="co">#</span></span>
+<span id="cb28-114"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-114" tabindex="-1"></a>    df_animation <span class="ot">&lt;-</span> <span class="fu">rbind</span>(df_animation, <span class="fu">data.frame</span>(<span class="at">iteration =</span> k, <span class="at">x =</span> df_temp<span class="sc">$</span>x, <span class="at">fitted.y =</span> fitted.y, <span class="at">od =</span> df_temp<span class="sc">$</span>od)) <span class="co">#</span></span>
+<span id="cb28-115"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-115" tabindex="-1"></a>   </span>
+<span id="cb28-116"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-116" tabindex="-1"></a>  </span>
+<span id="cb28-117"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-117" tabindex="-1"></a>    <span class="cf">if</span> (k <span class="sc">==</span> maxiter) {</span>
+<span id="cb28-118"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-118" tabindex="-1"></a>      <span class="fu">cat</span>(<span class="st">&quot;Number of iterations till stop: &quot;</span>, k, <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb28-119"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-119" tabindex="-1"></a>      <span class="cf">break</span></span>
+<span id="cb28-120"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-120" tabindex="-1"></a>    }</span>
+<span id="cb28-121"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-121" tabindex="-1"></a>  }</span>
+<span id="cb28-122"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-122" tabindex="-1"></a></span>
+<span id="cb28-123"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-123" tabindex="-1"></a>  <span class="fu">return</span>(df_animation)</span>
+<span id="cb28-124"><a href="applying-the-lm-algorithm-to-lba-data.html#cb28-124" tabindex="-1"></a>}</span></code></pre></div>
+<hr />
+</div>
+<div id="visualization-of-the-fitting-process" class="section level2 hasAnchor" number="6.5">
+<h2><span class="header-section-number">6.5</span> Visualization of the fitting process<a href="applying-the-lm-algorithm-to-lba-data.html#visualization-of-the-fitting-process" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>To visualize a specific calibration curve, for example, that of run no.2, we need to specify the run first and its parameters, before running the code above as follows:</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="applying-the-lm-algorithm-to-lba-data.html#cb29-1" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb29-2"><a href="applying-the-lm-algorithm-to-lba-data.html#cb29-2" tabindex="-1"></a>w <span class="ot">&lt;-</span> <span class="fu">c</span>(df_start<span class="sc">$</span>Max[df_start<span class="sc">$</span>run<span class="sc">==</span>n],</span>
+<span id="cb29-3"><a href="applying-the-lm-algorithm-to-lba-data.html#cb29-3" tabindex="-1"></a>       df_start<span class="sc">$</span>Slope[df_start<span class="sc">$</span>run<span class="sc">==</span>n],</span>
+<span id="cb29-4"><a href="applying-the-lm-algorithm-to-lba-data.html#cb29-4" tabindex="-1"></a>       df_start<span class="sc">$</span>C[df_start<span class="sc">$</span>run<span class="sc">==</span>n],</span>
+<span id="cb29-5"><a href="applying-the-lm-algorithm-to-lba-data.html#cb29-5" tabindex="-1"></a>       df_start<span class="sc">$</span>Min[df_start<span class="sc">$</span>run<span class="sc">==</span>n],</span>
+<span id="cb29-6"><a href="applying-the-lm-algorithm-to-lba-data.html#cb29-6" tabindex="-1"></a>       df_start<span class="sc">$</span>M[df_start<span class="sc">$</span>run<span class="sc">==</span>n]) </span></code></pre></div>
+<p>And now we can run the main code as follows:</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="applying-the-lm-algorithm-to-lba-data.html#cb30-1" tabindex="-1"></a>test.result <span class="ot">&lt;-</span> <span class="fu">LM.custom</span>(w, df_temp, n)</span></code></pre></div>
+<pre><code>## [1] &quot;ARD: 1.38822739141541e-15 \n PRD: -24911.2076465574&quot;
+##              [,1]
+## [1,]   6.58918714
+## [2,]   1.32383575
+## [3,] 193.61811188
+## [4,]   0.01556511
+## [5,]   0.23739597</code></pre>
+<p>And by running the following code, we can create an animation of the curve fitting process.</p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="applying-the-lm-algorithm-to-lba-data.html#cb32-1" tabindex="-1"></a>animation <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(test.result, <span class="fu">aes</span>(<span class="fu">log</span>(x), fitted.y, <span class="at">color =</span> <span class="fu">as.factor</span>(iteration))) <span class="sc">+</span></span>
+<span id="cb32-2"><a href="applying-the-lm-algorithm-to-lba-data.html#cb32-2" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span>  </span>
+<span id="cb32-3"><a href="applying-the-lm-algorithm-to-lba-data.html#cb32-3" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="fu">log</span>(x), od), <span class="at">color =</span> <span class="st">&quot;black&quot;</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span>  </span>
+<span id="cb32-4"><a href="applying-the-lm-algorithm-to-lba-data.html#cb32-4" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&#39;Iteration: {closest_state}&#39;</span>, <span class="at">x =</span> <span class="st">&#39;Concentration&#39;</span>, <span class="at">y =</span> <span class="st">&#39;OD&#39;</span>) <span class="sc">+</span></span>
+<span id="cb32-5"><a href="applying-the-lm-algorithm-to-lba-data.html#cb32-5" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">c</span>(<span class="fu">log</span>(<span class="dv">5</span>), <span class="fu">log</span>(<span class="dv">10</span>), <span class="fu">log</span>(<span class="dv">15</span>), <span class="fu">log</span>(<span class="dv">30</span>), <span class="fu">log</span>(<span class="dv">60</span>), <span class="fu">log</span>(<span class="dv">80</span>), <span class="fu">log</span>(<span class="dv">100</span>), <span class="fu">log</span>(<span class="dv">150</span>), <span class="fu">log</span>(<span class="dv">200</span>), <span class="fu">log</span>(<span class="dv">400</span>), <span class="fu">log</span>(<span class="dv">800</span>), <span class="fu">log</span>(<span class="dv">1600</span>)), </span>
+<span id="cb32-6"><a href="applying-the-lm-algorithm-to-lba-data.html#cb32-6" tabindex="-1"></a>                      <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;5&quot;</span>, <span class="st">&quot;10&quot;</span>, <span class="st">&quot;15&quot;</span>, <span class="st">&quot;30&quot;</span>, <span class="st">&quot;60&quot;</span>, <span class="st">&quot;80&quot;</span>, <span class="st">&quot;100&quot;</span>, <span class="st">&quot;150&quot;</span>, <span class="st">&quot;200&quot;</span>, <span class="st">&quot;400&quot;</span>, <span class="st">&quot;800&quot;</span>, <span class="st">&quot;1600&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb32-7"><a href="applying-the-lm-algorithm-to-lba-data.html#cb32-7" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb32-8"><a href="applying-the-lm-algorithm-to-lba-data.html#cb32-8" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>)) <span class="sc">+</span>  </span>
+<span id="cb32-9"><a href="applying-the-lm-algorithm-to-lba-data.html#cb32-9" tabindex="-1"></a>  <span class="fu">transition_states</span>(iteration, <span class="at">transition_length =</span> <span class="dv">1</span>, <span class="at">state_length =</span> <span class="dv">1</span>) <span class="sc">+</span> </span>
+<span id="cb32-10"><a href="applying-the-lm-algorithm-to-lba-data.html#cb32-10" tabindex="-1"></a>  <span class="fu">ease_aes</span>(<span class="st">&#39;linear&#39;</span>) <span class="sc">+</span></span>
+<span id="cb32-11"><a href="applying-the-lm-algorithm-to-lba-data.html#cb32-11" tabindex="-1"></a>  <span class="fu">scale_color_viridis_d</span>()<span class="sc">+</span></span>
+<span id="cb32-12"><a href="applying-the-lm-algorithm-to-lba-data.html#cb32-12" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">&quot;OD&quot;</span>)<span class="sc">+</span></span>
+<span id="cb32-13"><a href="applying-the-lm-algorithm-to-lba-data.html#cb32-13" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">&quot;Concentration (ng/mL) in log sacle&quot;</span>)</span>
+<span id="cb32-14"><a href="applying-the-lm-algorithm-to-lba-data.html#cb32-14" tabindex="-1"></a></span>
+<span id="cb32-15"><a href="applying-the-lm-algorithm-to-lba-data.html#cb32-15" tabindex="-1"></a><span class="fu">anim_save</span>(<span class="fu">here</span>(<span class="st">&quot;result&quot;</span>, <span class="fu">paste</span>(<span class="st">&quot;animation02.gif&quot;</span>)), <span class="at">animation =</span> animation)</span></code></pre></div>
+<hr />
+</div>
+<div id="result" class="section level2 hasAnchor" number="6.6">
+<h2><span class="header-section-number">6.6</span> Result<a href="applying-the-lm-algorithm-to-lba-data.html#result" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Now we have the animated figure.</p>
+<p><img src="result/animation02.gif" /><!-- --></p>
+<p>This is another figure obtained from another run.</p>
+<pre><code>## [1] &quot;ARD: 1.04836759881908e-14 \n PRD: -50.5868608662427&quot;
+##              [,1]
+## [1,]   5.49125202
+## [2,]   1.04675251
+## [3,] 273.36582074
+## [4,]  -0.01495244
+## [5,]   0.25593591</code></pre>
+<p><img src="result/animation74.gif" /><!-- --></p>
+<hr />
+<p>By introducing some modifications into the code, we can create plots showing the changes in each convergence criterion during the iterations. The following code has been modified to achieve this (refer to some codes marked with #).</p>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-1" tabindex="-1"></a>LM.custom<span class="fl">.2</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(w0, data, run) {</span>
+<span id="cb34-2"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-2" tabindex="-1"></a>  </span>
+<span id="cb34-3"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-3" tabindex="-1"></a>  w <span class="ot">&lt;-</span>  w.previous <span class="ot">&lt;-</span> w0  </span>
+<span id="cb34-4"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-4" tabindex="-1"></a>  k <span class="ot">&lt;-</span> <span class="dv">0</span> </span>
+<span id="cb34-5"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-5" tabindex="-1"></a>  feval <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb34-6"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-6" tabindex="-1"></a>  mu <span class="ot">&lt;-</span> <span class="fl">1e-2</span>  </span>
+<span id="cb34-7"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-7" tabindex="-1"></a>  ftol <span class="ot">&lt;-</span> <span class="fl">1e-6</span></span>
+<span id="cb34-8"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-8" tabindex="-1"></a>  ptol <span class="ot">&lt;-</span> <span class="fl">1e-6</span></span>
+<span id="cb34-9"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-9" tabindex="-1"></a>  gtol <span class="ot">&lt;-</span> <span class="dv">0</span>  </span>
+<span id="cb34-10"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-10" tabindex="-1"></a>  maxiter <span class="ot">&lt;-</span> <span class="dv">200</span></span>
+<span id="cb34-11"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-11" tabindex="-1"></a>  maxfev <span class="ot">&lt;-</span> <span class="dv">600</span></span>
+<span id="cb34-12"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-12" tabindex="-1"></a>  </span>
+<span id="cb34-13"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-13" tabindex="-1"></a>  y <span class="ot">&lt;-</span> data<span class="sc">$</span>od[data<span class="sc">$</span>run <span class="sc">==</span> run]</span>
+<span id="cb34-14"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-14" tabindex="-1"></a>  x_data <span class="ot">&lt;-</span> <span class="fu">unique</span>(data<span class="sc">$</span>conc)</span>
+<span id="cb34-15"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-15" tabindex="-1"></a>  n <span class="ot">&lt;-</span> <span class="fu">length</span>(x_data)</span>
+<span id="cb34-16"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-16" tabindex="-1"></a>  df_temp <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="fu">unique</span>(data<span class="sc">$</span>conc), <span class="at">od =</span> y)</span>
+<span id="cb34-17"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-17" tabindex="-1"></a>  </span>
+<span id="cb34-18"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-18" tabindex="-1"></a>  </span>
+<span id="cb34-19"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-19" tabindex="-1"></a>  f <span class="ot">&lt;-</span> <span class="cf">function</span>(w0) {</span>
+<span id="cb34-20"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-20" tabindex="-1"></a>    model <span class="ot">&lt;-</span> w0[<span class="dv">1</span>] <span class="sc">+</span> (w0[<span class="dv">4</span>] <span class="sc">-</span> w0[<span class="dv">1</span>]) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> (df_temp<span class="sc">$</span>x <span class="sc">/</span> w0[<span class="dv">3</span>])<span class="sc">^</span>w0[<span class="dv">2</span>])<span class="sc">^</span>w0[<span class="dv">5</span>]</span>
+<span id="cb34-21"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-21" tabindex="-1"></a>    <span class="fu">return</span>(model)</span>
+<span id="cb34-22"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-22" tabindex="-1"></a>  }</span>
+<span id="cb34-23"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-23" tabindex="-1"></a></span>
+<span id="cb34-24"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-24" tabindex="-1"></a>  </span>
+<span id="cb34-25"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-25" tabindex="-1"></a>  chi.squre.fn <span class="ot">&lt;-</span> <span class="cf">function</span>(w) {</span>
+<span id="cb34-26"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-26" tabindex="-1"></a>    chi.sq <span class="ot">&lt;-</span> <span class="fu">sum</span>((y <span class="sc">-</span> <span class="fu">f</span>(w))<span class="sc">^</span><span class="dv">2</span>)  </span>
+<span id="cb34-27"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-27" tabindex="-1"></a>    <span class="fu">return</span>(chi.sq)</span>
+<span id="cb34-28"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-28" tabindex="-1"></a>  }</span>
+<span id="cb34-29"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-29" tabindex="-1"></a>  </span>
+<span id="cb34-30"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-30" tabindex="-1"></a>  norm.fn <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="fu">sqrt</span>(<span class="fu">sum</span>(x<span class="sc">^</span><span class="dv">2</span>))</span>
+<span id="cb34-31"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-31" tabindex="-1"></a>  initial.chisq <span class="ot">&lt;-</span> previous.chisq <span class="ot">&lt;-</span> <span class="fu">chi.squre.fn</span>(w)</span>
+<span id="cb34-32"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-32" tabindex="-1"></a>  </span>
+<span id="cb34-33"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-33" tabindex="-1"></a>  calculate.cosine.angles <span class="ot">&lt;-</span> <span class="cf">function</span>(y, w) {</span>
+<span id="cb34-34"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-34" tabindex="-1"></a>    r <span class="ot">&lt;-</span> y <span class="sc">-</span> <span class="fu">f</span>(w)  </span>
+<span id="cb34-35"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-35" tabindex="-1"></a>    J <span class="ot">&lt;-</span> numDeriv<span class="sc">::</span><span class="fu">jacobian</span>(f, w)  </span>
+<span id="cb34-36"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-36" tabindex="-1"></a>    </span>
+<span id="cb34-37"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-37" tabindex="-1"></a>    norm.r <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">sum</span>(r<span class="sc">^</span><span class="dv">2</span>)) </span>
+<span id="cb34-38"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-38" tabindex="-1"></a>    cosine.angles <span class="ot">&lt;-</span> <span class="fu">numeric</span>(<span class="fu">ncol</span>(J))  </span>
+<span id="cb34-39"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-39" tabindex="-1"></a></span>
+<span id="cb34-40"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-40" tabindex="-1"></a>    <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(J)) {</span>
+<span id="cb34-41"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-41" tabindex="-1"></a>      J.col <span class="ot">&lt;-</span> J[, i]  </span>
+<span id="cb34-42"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-42" tabindex="-1"></a>      norm.J.col <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">sum</span>(J.col<span class="sc">^</span><span class="dv">2</span>))  </span>
+<span id="cb34-43"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-43" tabindex="-1"></a>      dot.product <span class="ot">&lt;-</span> <span class="fu">sum</span>(J.col <span class="sc">*</span> r)</span>
+<span id="cb34-44"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-44" tabindex="-1"></a>      cosine.angles[i] <span class="ot">&lt;-</span> dot.product <span class="sc">/</span> (norm.J.col <span class="sc">*</span> norm.r)</span>
+<span id="cb34-45"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-45" tabindex="-1"></a>    }</span>
+<span id="cb34-46"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-46" tabindex="-1"></a>    </span>
+<span id="cb34-47"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-47" tabindex="-1"></a>    <span class="fu">return</span>(cosine.angles)</span>
+<span id="cb34-48"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-48" tabindex="-1"></a>  }</span>
+<span id="cb34-49"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-49" tabindex="-1"></a></span>
+<span id="cb34-50"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-50" tabindex="-1"></a>  df_result <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">Iteration =</span> <span class="fu">integer</span>(<span class="dv">0</span>), <span class="at">RE =</span> <span class="fu">numeric</span>(<span class="dv">0</span>), <span class="at">ARD =</span> <span class="fu">numeric</span>(<span class="dv">0</span>), <span class="at">PRD=</span> <span class="fu">numeric</span>(), <span class="at">CA =</span> <span class="fu">numeric</span>(<span class="dv">0</span>), <span class="at">mu =</span> <span class="fu">numeric</span>(<span class="dv">0</span>)) <span class="co">#</span></span>
+<span id="cb34-51"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-51" tabindex="-1"></a>  </span>
+<span id="cb34-52"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-52" tabindex="-1"></a></span>
+<span id="cb34-53"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-53" tabindex="-1"></a>  <span class="cf">while</span> (k <span class="sc">&lt;</span> maxiter <span class="sc">&amp;&amp;</span> feval <span class="sc">&lt;</span> maxfev) {</span>
+<span id="cb34-54"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-54" tabindex="-1"></a>    J <span class="ot">&lt;-</span> numDeriv<span class="sc">::</span><span class="fu">jacobian</span>(f, w) </span>
+<span id="cb34-55"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-55" tabindex="-1"></a>    r1 <span class="ot">&lt;-</span> y <span class="sc">-</span> <span class="fu">f</span>(w)  </span>
+<span id="cb34-56"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-56" tabindex="-1"></a>    Jr <span class="ot">&lt;-</span> <span class="fu">t</span>(J) <span class="sc">%*%</span> r1</span>
+<span id="cb34-57"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-57" tabindex="-1"></a>    feval <span class="ot">&lt;-</span> feval <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb34-58"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-58" tabindex="-1"></a></span>
+<span id="cb34-59"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-59" tabindex="-1"></a>    <span class="cf">if</span> (feval <span class="sc">==</span> maxfev) {</span>
+<span id="cb34-60"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-60" tabindex="-1"></a>      <span class="fu">cat</span>(<span class="st">&quot;Number of function evaluations reached: &quot;</span>, feval, <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb34-61"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-61" tabindex="-1"></a>      <span class="cf">break</span></span>
+<span id="cb34-62"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-62" tabindex="-1"></a>    }</span>
+<span id="cb34-63"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-63" tabindex="-1"></a></span>
+<span id="cb34-64"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-64" tabindex="-1"></a>    JTJ <span class="ot">&lt;-</span> <span class="fu">t</span>(J) <span class="sc">%*%</span> J <span class="sc">+</span> mu <span class="sc">*</span> <span class="fu">diag</span>(<span class="fu">ncol</span>(J))  </span>
+<span id="cb34-65"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-65" tabindex="-1"></a>    QR <span class="ot">&lt;-</span> <span class="fu">qr</span>(JTJ)</span>
+<span id="cb34-66"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-66" tabindex="-1"></a>    </span>
+<span id="cb34-67"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-67" tabindex="-1"></a>    damp <span class="ot">&lt;-</span> mu <span class="sc">*</span> <span class="fu">diag</span>(<span class="fu">ncol</span>(JTJ))</span>
+<span id="cb34-68"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-68" tabindex="-1"></a></span>
+<span id="cb34-69"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-69" tabindex="-1"></a>    </span>
+<span id="cb34-70"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-70" tabindex="-1"></a>    JTJ.inv <span class="ot">&lt;-</span> <span class="fu">tryCatch</span>({</span>
+<span id="cb34-71"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-71" tabindex="-1"></a>      <span class="fu">qr.solve</span>(JTJ)</span>
+<span id="cb34-72"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-72" tabindex="-1"></a>    }, <span class="at">error =</span> <span class="cf">function</span>(e) {</span>
+<span id="cb34-73"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-73" tabindex="-1"></a>      <span class="fu">ginv</span>(JTJ)</span>
+<span id="cb34-74"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-74" tabindex="-1"></a>    })</span>
+<span id="cb34-75"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-75" tabindex="-1"></a></span>
+<span id="cb34-76"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-76" tabindex="-1"></a>    dk <span class="ot">&lt;-</span> JTJ.inv <span class="sc">%*%</span> Jr</span>
+<span id="cb34-77"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-77" tabindex="-1"></a>    w1 <span class="ot">&lt;-</span> w <span class="sc">+</span> dk</span>
+<span id="cb34-78"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-78" tabindex="-1"></a></span>
+<span id="cb34-79"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-79" tabindex="-1"></a>    chisq.new <span class="ot">&lt;-</span> <span class="fu">chi.squre.fn</span>(w1)</span>
+<span id="cb34-80"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-80" tabindex="-1"></a></span>
+<span id="cb34-81"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-81" tabindex="-1"></a>    actual.relative.reduction <span class="ot">&lt;-</span> <span class="fu">abs</span>( previous.chisq <span class="sc">-</span> chisq.new) <span class="sc">/</span>  previous.chisq</span>
+<span id="cb34-82"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-82" tabindex="-1"></a>    predicted.relative.reduction <span class="ot">&lt;-</span> p <span class="ot">&lt;-</span>  (previous.chisq <span class="sc">-</span> chisq.new) <span class="sc">/</span> <span class="fu">abs</span>(<span class="fu">t</span>(dk) <span class="sc">%*%</span> (damp <span class="sc">%*%</span> dk <span class="sc">+</span> Jr))</span>
+<span id="cb34-83"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-83" tabindex="-1"></a>    relative.error <span class="ot">&lt;-</span> <span class="fu">max</span>(<span class="fu">abs</span>(w1 <span class="sc">-</span> w.previous)) <span class="sc">/</span> <span class="fu">max</span>(<span class="fu">abs</span>(w.previous))</span>
+<span id="cb34-84"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-84" tabindex="-1"></a>    cosine.angles <span class="ot">&lt;-</span> <span class="fu">calculate.cosine.angles</span>(y, w)</span>
+<span id="cb34-85"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-85" tabindex="-1"></a>    </span>
+<span id="cb34-86"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-86" tabindex="-1"></a>    df_result <span class="ot">&lt;-</span> <span class="fu">rbind</span>(df_result, <span class="fu">data.frame</span>(<span class="at">Iteration =</span> k, <span class="at">RE =</span> relative.error, <span class="at">ARD =</span> actual.relative.reduction, <span class="at">PRD =</span> p,  <span class="at">CA =</span> <span class="fu">max</span>(<span class="fu">abs</span>(cosine.angles)), <span class="at">mu =</span> mu)) <span class="co">#</span></span>
+<span id="cb34-87"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-87" tabindex="-1"></a>    </span>
+<span id="cb34-88"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-88" tabindex="-1"></a>    convergence <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
+<span id="cb34-89"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-89" tabindex="-1"></a>      <span class="cf">if</span> (actual.relative.reduction <span class="sc">&lt;</span> ftol <span class="sc">&amp;</span> p <span class="sc">&lt;</span> ftol) {</span>
+<span id="cb34-90"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-90" tabindex="-1"></a>        convergence.result <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="st">&quot;ARD:&quot;</span>, actual.relative.reduction, <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>, <span class="st">&quot;PRD:&quot;</span>, p )</span>
+<span id="cb34-91"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-91" tabindex="-1"></a>      } <span class="cf">else</span> <span class="cf">if</span> (relative.error <span class="sc">&lt;</span> ptol) {</span>
+<span id="cb34-92"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-92" tabindex="-1"></a>        convergence.result <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="st">&quot;RE:&quot;</span>, relative.error)</span>
+<span id="cb34-93"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-93" tabindex="-1"></a>      } <span class="cf">else</span>  {</span>
+<span id="cb34-94"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-94" tabindex="-1"></a>        convergence.result <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="st">&quot;CA:&quot;</span>, cosine.angles)</span>
+<span id="cb34-95"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-95" tabindex="-1"></a>      }</span>
+<span id="cb34-96"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-96" tabindex="-1"></a>    }</span>
+<span id="cb34-97"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-97" tabindex="-1"></a>    </span>
+<span id="cb34-98"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-98" tabindex="-1"></a>    convergence.result <span class="ot">&lt;-</span> <span class="fu">c</span>()</span>
+<span id="cb34-99"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-99" tabindex="-1"></a>    </span>
+<span id="cb34-100"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-100" tabindex="-1"></a>    <span class="cf">if</span> (actual.relative.reduction <span class="sc">&lt;</span> ftol <span class="sc">&amp;</span> p <span class="sc">&lt;</span> ftol <span class="sc">||</span> relative.error <span class="sc">&lt;</span> ptol <span class="sc">||</span> <span class="fu">max</span>(<span class="fu">abs</span>(cosine.angles)) <span class="sc">&lt;</span> gtol ) {</span>
+<span id="cb34-101"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-101" tabindex="-1"></a>     convergence.result <span class="ot">&lt;-</span> <span class="fu">convergence</span>()</span>
+<span id="cb34-102"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-102" tabindex="-1"></a>     <span class="fu">print</span>(convergence.result)</span>
+<span id="cb34-103"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-103" tabindex="-1"></a>     <span class="fu">print</span>(w)</span>
+<span id="cb34-104"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-104" tabindex="-1"></a>     <span class="cf">break</span> </span>
+<span id="cb34-105"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-105" tabindex="-1"></a>    }</span>
+<span id="cb34-106"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-106" tabindex="-1"></a>    </span>
+<span id="cb34-107"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-107" tabindex="-1"></a>    <span class="cf">if</span> (p <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb34-108"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-108" tabindex="-1"></a>      mu <span class="ot">&lt;-</span> <span class="fu">max</span>(mu <span class="sc">/</span> <span class="dv">9</span>, <span class="fl">1e-10</span>)</span>
+<span id="cb34-109"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-109" tabindex="-1"></a>      w_previous <span class="ot">&lt;-</span> w </span>
+<span id="cb34-110"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-110" tabindex="-1"></a>      w <span class="ot">&lt;-</span> w1  </span>
+<span id="cb34-111"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-111" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb34-112"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-112" tabindex="-1"></a>      mu <span class="ot">&lt;-</span> <span class="fu">min</span>(mu <span class="sc">*</span> <span class="dv">11</span>, <span class="fl">1e10</span>)  </span>
+<span id="cb34-113"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-113" tabindex="-1"></a>    }</span>
+<span id="cb34-114"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-114" tabindex="-1"></a>     previous.chisq <span class="ot">&lt;-</span> chisq.new  </span>
+<span id="cb34-115"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-115" tabindex="-1"></a>     k <span class="ot">&lt;-</span> k <span class="sc">+</span> <span class="dv">1</span>  </span>
+<span id="cb34-116"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-116" tabindex="-1"></a></span>
+<span id="cb34-117"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-117" tabindex="-1"></a>    <span class="cf">if</span> (k <span class="sc">==</span> maxiter) {</span>
+<span id="cb34-118"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-118" tabindex="-1"></a>      <span class="fu">cat</span>(<span class="st">&quot;Number of iterations till stop: &quot;</span>, k, <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb34-119"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-119" tabindex="-1"></a>      <span class="cf">break</span></span>
+<span id="cb34-120"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-120" tabindex="-1"></a>    }</span>
+<span id="cb34-121"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-121" tabindex="-1"></a>  }</span>
+<span id="cb34-122"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-122" tabindex="-1"></a>    <span class="fu">return</span>(df_result)</span>
+<span id="cb34-123"><a href="applying-the-lm-algorithm-to-lba-data.html#cb34-123" tabindex="-1"></a>}</span></code></pre></div>
+<p>The same way to run the code as follows:</p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="applying-the-lm-algorithm-to-lba-data.html#cb35-1" tabindex="-1"></a>test.result<span class="fl">.2</span> <span class="ot">&lt;-</span> <span class="fu">LM.custom.2</span>(w, df_temp, <span class="dv">74</span>)</span></code></pre></div>
+<pre><code>## [1] &quot;ARD: 1.04836759881908e-14 \n PRD: -50.5868608662427&quot;
+##              [,1]
+## [1,]   5.49125202
+## [2,]   1.04675251
+## [3,] 273.36582074
+## [4,]  -0.01495244
+## [5,]   0.25593591</code></pre>
+<p>Finally, we can create figures to plot the convergence criteria values at each iteration:</p>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="applying-the-lm-algorithm-to-lba-data.html#cb37-1" tabindex="-1"></a>ARD <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(test.result<span class="fl">.2</span>, <span class="fu">aes</span>(Iteration, ARD))<span class="sc">+</span></span>
+<span id="cb37-2"><a href="applying-the-lm-algorithm-to-lba-data.html#cb37-2" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha=</span>.<span class="dv">5</span>, <span class="at">size=</span>.<span class="dv">7</span>)<span class="sc">+</span></span>
+<span id="cb37-3"><a href="applying-the-lm-algorithm-to-lba-data.html#cb37-3" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">col=</span><span class="st">&quot;red&quot;</span>)<span class="sc">+</span></span>
+<span id="cb37-4"><a href="applying-the-lm-algorithm-to-lba-data.html#cb37-4" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span>
+<span id="cb37-5"><a href="applying-the-lm-algorithm-to-lba-data.html#cb37-5" tabindex="-1"></a>PRD <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(test.result<span class="fl">.2</span>, <span class="fu">aes</span>(Iteration, PRD))<span class="sc">+</span></span>
+<span id="cb37-6"><a href="applying-the-lm-algorithm-to-lba-data.html#cb37-6" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha=</span>.<span class="dv">5</span>, <span class="at">size=</span>.<span class="dv">7</span>)<span class="sc">+</span></span>
+<span id="cb37-7"><a href="applying-the-lm-algorithm-to-lba-data.html#cb37-7" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">col =</span> <span class="st">&quot;blue&quot;</span>)<span class="sc">+</span></span>
+<span id="cb37-8"><a href="applying-the-lm-algorithm-to-lba-data.html#cb37-8" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span>
+<span id="cb37-9"><a href="applying-the-lm-algorithm-to-lba-data.html#cb37-9" tabindex="-1"></a>RE <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(test.result<span class="fl">.2</span>, <span class="fu">aes</span>(Iteration, RE))<span class="sc">+</span></span>
+<span id="cb37-10"><a href="applying-the-lm-algorithm-to-lba-data.html#cb37-10" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha=</span>.<span class="dv">5</span>, <span class="at">size=</span>.<span class="dv">7</span>)<span class="sc">+</span></span>
+<span id="cb37-11"><a href="applying-the-lm-algorithm-to-lba-data.html#cb37-11" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">col=</span><span class="st">&quot;green&quot;</span>)<span class="sc">+</span></span>
+<span id="cb37-12"><a href="applying-the-lm-algorithm-to-lba-data.html#cb37-12" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span>
+<span id="cb37-13"><a href="applying-the-lm-algorithm-to-lba-data.html#cb37-13" tabindex="-1"></a></span>
+<span id="cb37-14"><a href="applying-the-lm-algorithm-to-lba-data.html#cb37-14" tabindex="-1"></a>CA <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(test.result<span class="fl">.2</span>, <span class="fu">aes</span>(Iteration, CA))<span class="sc">+</span></span>
+<span id="cb37-15"><a href="applying-the-lm-algorithm-to-lba-data.html#cb37-15" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha=</span>.<span class="dv">5</span>, <span class="at">size=</span>.<span class="dv">7</span>)<span class="sc">+</span></span>
+<span id="cb37-16"><a href="applying-the-lm-algorithm-to-lba-data.html#cb37-16" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">col=</span><span class="st">&quot;purple&quot;</span>)<span class="sc">+</span></span>
+<span id="cb37-17"><a href="applying-the-lm-algorithm-to-lba-data.html#cb37-17" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span>
+<span id="cb37-18"><a href="applying-the-lm-algorithm-to-lba-data.html#cb37-18" tabindex="-1"></a></span>
+<span id="cb37-19"><a href="applying-the-lm-algorithm-to-lba-data.html#cb37-19" tabindex="-1"></a>mu <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(test.result<span class="fl">.2</span>, <span class="fu">aes</span>(Iteration, mu))<span class="sc">+</span></span>
+<span id="cb37-20"><a href="applying-the-lm-algorithm-to-lba-data.html#cb37-20" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha=</span>.<span class="dv">5</span>, <span class="at">size=</span>.<span class="dv">7</span>)<span class="sc">+</span></span>
+<span id="cb37-21"><a href="applying-the-lm-algorithm-to-lba-data.html#cb37-21" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">col=</span><span class="st">&quot;skyblue&quot;</span>)<span class="sc">+</span></span>
+<span id="cb37-22"><a href="applying-the-lm-algorithm-to-lba-data.html#cb37-22" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span>
+<span id="cb37-23"><a href="applying-the-lm-algorithm-to-lba-data.html#cb37-23" tabindex="-1"></a></span>
+<span id="cb37-24"><a href="applying-the-lm-algorithm-to-lba-data.html#cb37-24" tabindex="-1"></a><span class="fu">grid.arrange</span>(ARD, PRD, RE, CA, mu, <span class="at">nrow=</span><span class="dv">2</span>)</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-29-1.png" width="672" /></p>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="applying-the-algorithm-to-a-sphere-function-model.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="evaluation-of-the-custom-code.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+  "sharing": {
+    "github": false,
+    "facebook": true,
+    "twitter": true,
+    "linkedin": false,
+    "weibo": false,
+    "instapaper": false,
+    "vk": false,
+    "whatsapp": false,
+    "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+  },
+  "fontsettings": {
+    "theme": "white",
+    "family": "sans",
+    "size": 2
+  },
+  "edit": {
+    "link": "https://github.com/USERNAME/REPO/edit/BRANCH/06-5PL-fitting1.Rmd",
+    "text": "Edit"
+  },
+  "history": {
+    "link": null,
+    "text": null
+  },
+  "view": {
+    "link": null,
+    "text": null
+  },
+  "download": ["_main.HTML"],
+  "search": {
+    "engine": "fuse",
+    "options": null
+  },
+  "toc": {
+    "collapse": "subsection"
+  }
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

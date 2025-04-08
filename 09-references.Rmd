@@ -1,0 +1,16 @@
+`r if (knitr::is_html_output()) '
+# References {-}
+'`
+**The Levenberg-Marquardt algorithm for nonlinear least squares curve-fitting problems**   
+https://people.duke.edu/~hpgavin/lm.pdf  
+
+**Methods for non-linear least squares problems**  
+(https://www2.imm.dtu.dk/pubdb/edoc/imm3215.pdf)  
+
+**minpack.lm**  
+https://github.com/cran/minpack.lm  
+
+**nlsLM**  
+(https://cran.r-project.org/web/packages/minpack.lm/minpack.lm.pdf)  
+
+**Numerical Recipes Routines and Examples in Basic, Julein C.Sprott**

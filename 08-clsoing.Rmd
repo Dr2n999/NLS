@@ -1,0 +1,7 @@
+
+# Closing Remarks {-}
+
+In my experience in bioanalytical research, particularly when working with complex data from ligand binding assays or other experimental methods, I've found that having a solid understanding of the mathematical principles behind the tools we use is absolutely crucial. However, I've noticed that many bioanalytical scientists, including myself in the past, often rely on established functions or commercial software without fully grasping the underlying mathematical details of the algorithms, simply because there aren't enough opportunities to learn these principles. This, I've realized, can limit our ability and creativity.
+
+One of the key goals of my work has been to provide a clearer, more transparent understanding of the mathematical principles involved in non-linear regression. I've found that this kind of transparency not only enhances my own understanding but also benefits others who share similar experiences. I hope my work allows for a deeper appreciation of the process, which can ultimately lead to significant improvements in the quality of our work.
+

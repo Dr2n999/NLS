@@ -1,0 +1,54 @@
+# Levenberg-Marquardt (LM) algorithm
+
+The Levenberg-Marquardt (LM) algorithm is a combination of two optimization techniques: the **Gauss-Newton method** and the **gradient descent method**. It is designed to minimize a non-linear least squares problem, often encountered in regression and curve fitting.
+
+-   The **Gauss-Newton method** is efficient for problems where the residuals are small and the function can be approximated by a quadratic model. However, the Gauss-Newton method can perform poorly when the function is highly non-linear, or if the initial guess for the parameters is far from the optimal solution.
+-   The **gradient descent method** is more robust and works well even with large non-linearities, but it may require many iterations to converge, especially when the gradient is very small.
+
+The LM algorithm smoothly interpolates between the two methods. When the current solution is far from the optimal, it behaves more like gradient descent. As the solution improves and the model becomes more linear, the algorithm shifts towards the Gauss-Newton method. This hybrid approach provides the stability of gradient descent and the efficiency of Gauss-Newton.
+
+The LM algorithm can be summarized in the following steps:
+
+1.  **Initialization**: Choose an initial guess $\theta_{\text{old}}$ and set the damping factor $\lambda_0$ to a small positive value.
+
+2.  **Iteration**: Repeat the following steps until convergence:
+
+-   Compute the Jacobian matrix $J$ and the residual vector $r = y - \hat{y}(\alpha)$.
+
+-   Compute the Gauss-Newton step with the damping factor:
+
+    $$
+      h_{\text{lm}} =  \left( J^T W J + \lambda I \right)^{-1} J^T  Wr
+      $$
+
+-   Update the parameter vector:
+
+    $$
+      \theta_{\text{new}} = \theta_{\text{old}} + h_{\text{lm}}
+      $$
+
+-   If the new cost function is smaller than the previous one, decrease $\lambda$; otherwise, increase $\lambda$.
+
+3.  **Convergence**: The algorithm stops when the change in the cost function or the parameter vector is sufficiently small.
+
+4.  **Marquardt** suggested later to modify the algorithm :
+
+$$
+\theta_{\text{new}} = \theta_{\text{old}} + \left( J^T W J + \lambda \ diag(J^TWJ) \right)^{-1} J^T W r
+$$
+
+## The Damping Factor $\lambda$
+
+The damping factor $\lambda$ adjusts the size of the update step. If the current solution is far from the optimum, a larger $\lambda$ will force the algorithm to behave more like gradient descent, ensuring a more stable update. Conversely, as the solution improves and the model becomes linear, $\lambda$ is reduced, and the algorithm behaves more like Gauss-Newton, which converges faster.
+
+The update rule for $\lambda$ is typically based on the change in the cost function between iterations:
+
+-   If the new cost function $\chi^2(\alpha_{\text{new}})$ is smaller than the previous cost function $\chi^2(\alpha_{\text{old}})$, then reduce $\lambda$ to speed up convergence.
+
+-   If the new cost function $\chi^2(\alpha_{\text{new}})$ is larger than the previous one, increase $\lambda$ to make the algorithm behave more like gradient descent.
+
+## Advantages of the LM Algorithm
+
+-   **Efficiency**: The LM algorithm is more efficient than pure gradient descent when the problem is approximately linear, and more robust than Gauss-Newton for non-linear problems.
+-   **Stability**: By adjusting the damping factor, the LM algorithm can avoid large updates that could cause divergence, which is a common problem in Gauss-Newton.
+-   **Versatility**: The LM algorithm is widely used in various applications, including curve fitting, machine learning, and computer vision.

@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 4 Applying the LM Algorithm to a Damped Oscillation Model | Non-linear regression</title>
+  <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
+set in the _output.yml file.
+The HTML output format for this example is bookdown::gitbook,</p>" />
+  <meta name="generator" content="bookdown 0.42 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 4 Applying the LM Algorithm to a Damped Oscillation Model | Non-linear regression" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="<p>This is a minimal example of using the bookdown package to write a book.
+set in the _output.yml file.
+The HTML output format for this example is bookdown::gitbook,</p>" />
+  <meta name="github-repo" content="rstudio/bookdown-demo" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 4 Applying the LM Algorithm to a Damped Oscillation Model | Non-linear regression" />
+  
+  <meta name="twitter:description" content="<p>This is a minimal example of using the bookdown package to write a book.
+set in the _output.yml file.
+The HTML output format for this example is bookdown::gitbook,</p>" />
+  
+
+<meta name="author" content="Kyungmin In, GCCL" />
+
+
+<meta name="date" content="2025-04-01" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="levenberg-marquardt-lm-algorithm.html"/>
+<link rel="next" href="applying-the-algorithm-to-a-sphere-function-model.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+<link href="libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet" />
+<script src="libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+<script src="libs/plotly-binding-4.10.4/plotly.js"></script>
+<script src="libs/typedarray-0.1/typedarray.min.js"></script>
+<link href="libs/crosstalk-1.2.1/css/crosstalk.min.css" rel="stylesheet" />
+<script src="libs/crosstalk-1.2.1/js/crosstalk.min.js"></script>
+<link href="libs/plotly-htmlwidgets-css-2.11.1/plotly-htmlwidgets.css" rel="stylesheet" />
+<script src="libs/plotly-main-2.11.1/plotly-latest.min.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Non-linear regression</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Non-Linear Regression and Optimization Methods in LBA Data Analysis</a>
+<ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#key-optimization-methods-in-non-linear-regression"><i class="fa fa-check"></i>Key Optimization Methods in Non-Linear Regression</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#the-levenberg-marquardt-algorithm-a-hybrid-approach"><i class="fa fa-check"></i>The Levenberg-Marquardt Algorithm: A Hybrid Approach</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#why-should-we-care-about-these-optimization-methods"><i class="fa fa-check"></i>Why Should We Care About These Optimization Methods?</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#practical-implementation-in-r"><i class="fa fa-check"></i>Practical Implementation in R</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="author.html"><a href="author.html"><i class="fa fa-check"></i>Author</a></li>
+<li class="chapter" data-level="1" data-path="the-gradient-descent-method.html"><a href="the-gradient-descent-method.html"><i class="fa fa-check"></i><b>1</b> The Gradient descent method</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="the-gradient-descent-method.html"><a href="the-gradient-descent-method.html#computation-of-the-chi-squared-function"><i class="fa fa-check"></i><b>1.1</b> Computation of the chi-squared function</a></li>
+<li class="chapter" data-level="1.2" data-path="the-gradient-descent-method.html"><a href="the-gradient-descent-method.html#computation-of-the-gradient"><i class="fa fa-check"></i><b>1.2</b> Computation of the gradient</a></li>
+<li class="chapter" data-level="1.3" data-path="the-gradient-descent-method.html"><a href="the-gradient-descent-method.html#the-parameter-updating"><i class="fa fa-check"></i><b>1.3</b> The parameter updating</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="the-gauss-newton-method.html"><a href="the-gauss-newton-method.html"><i class="fa fa-check"></i><b>2</b> The Gauss-Newton Method</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="the-gauss-newton-method.html"><a href="the-gauss-newton-method.html#computation-of-the-chi-squared-function-1"><i class="fa fa-check"></i><b>2.1</b> Computation of the chi-squared function</a></li>
+<li class="chapter" data-level="2.2" data-path="the-gauss-newton-method.html"><a href="the-gauss-newton-method.html#computation-of-the-gradient-1"><i class="fa fa-check"></i><b>2.2</b> Computation of the gradient</a></li>
+<li class="chapter" data-level="2.3" data-path="the-gauss-newton-method.html"><a href="the-gauss-newton-method.html#the-parameter-updating-1"><i class="fa fa-check"></i><b>2.3</b> The parameter updating</a></li>
+<li class="chapter" data-level="2.4" data-path="the-gauss-newton-method.html"><a href="the-gauss-newton-method.html#summary-and-comparison-to-gradient-descent"><i class="fa fa-check"></i><b>2.4</b> Summary and Comparison to Gradient Descent</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="levenberg-marquardt-lm-algorithm.html"><a href="levenberg-marquardt-lm-algorithm.html"><i class="fa fa-check"></i><b>3</b> Levenberg-Marquardt (LM) algorithm</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="levenberg-marquardt-lm-algorithm.html"><a href="levenberg-marquardt-lm-algorithm.html#the-damping-factor-lambda"><i class="fa fa-check"></i><b>3.1</b> The Damping Factor <span class="math inline">\(\lambda\)</span></a></li>
+<li class="chapter" data-level="3.2" data-path="levenberg-marquardt-lm-algorithm.html"><a href="levenberg-marquardt-lm-algorithm.html#advantages-of-the-lm-algorithm"><i class="fa fa-check"></i><b>3.2</b> Advantages of the LM Algorithm</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="applying-the-lm-algorithm-to-a-damped-oscillation-model.html"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html"><i class="fa fa-check"></i><b>4</b> Applying the LM Algorithm to a Damped Oscillation Model</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="applying-the-lm-algorithm-to-a-damped-oscillation-model.html"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#example-data"><i class="fa fa-check"></i><b>4.1</b> Example Data</a></li>
+<li class="chapter" data-level="4.2" data-path="applying-the-lm-algorithm-to-a-damped-oscillation-model.html"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#data-fitting-using-nlslm"><i class="fa fa-check"></i><b>4.2</b> Data fitting using nlsLM</a></li>
+<li class="chapter" data-level="4.3" data-path="applying-the-lm-algorithm-to-a-damped-oscillation-model.html"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#how-the-algorithm-works"><i class="fa fa-check"></i><b>4.3</b> How the Algorithm Works</a></li>
+<li class="chapter" data-level="4.4" data-path="applying-the-lm-algorithm-to-a-damped-oscillation-model.html"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#custom-implementation-of-the-algorithm"><i class="fa fa-check"></i><b>4.4</b> Custom Implementation of the Algorithm</a></li>
+<li class="chapter" data-level="4.5" data-path="applying-the-lm-algorithm-to-a-damped-oscillation-model.html"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#convergence-criteria-of-the-algorithm"><i class="fa fa-check"></i><b>4.5</b> Convergence Criteria of the Algorithm</a></li>
+<li class="chapter" data-level="4.6" data-path="applying-the-lm-algorithm-to-a-damped-oscillation-model.html"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#code-example"><i class="fa fa-check"></i><b>4.6</b> Code Example</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="applying-the-algorithm-to-a-sphere-function-model.html"><a href="applying-the-algorithm-to-a-sphere-function-model.html"><i class="fa fa-check"></i><b>5</b> Applying the Algorithm to a Sphere function model</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="applying-the-algorithm-to-a-sphere-function-model.html"><a href="applying-the-algorithm-to-a-sphere-function-model.html#code-explanation"><i class="fa fa-check"></i><b>5.1</b> Code Explanation</a></li>
+<li class="chapter" data-level="5.2" data-path="applying-the-algorithm-to-a-sphere-function-model.html"><a href="applying-the-algorithm-to-a-sphere-function-model.html#example-data-1"><i class="fa fa-check"></i><b>5.2</b> Example data</a></li>
+<li class="chapter" data-level="5.3" data-path="applying-the-algorithm-to-a-sphere-function-model.html"><a href="applying-the-algorithm-to-a-sphere-function-model.html#optimization-with-the-algorithm"><i class="fa fa-check"></i><b>5.3</b> Optimization with the Algorithm</a></li>
+<li class="chapter" data-level="5.4" data-path="applying-the-algorithm-to-a-sphere-function-model.html"><a href="applying-the-algorithm-to-a-sphere-function-model.html#applying-the-algorithm"><i class="fa fa-check"></i><b>5.4</b> Applying the Algorithm</a></li>
+<li class="chapter" data-level="5.5" data-path="applying-the-algorithm-to-a-sphere-function-model.html"><a href="applying-the-algorithm-to-a-sphere-function-model.html#code-example-1"><i class="fa fa-check"></i><b>5.5</b> Code Example</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="applying-the-lm-algorithm-to-lba-data.html"><a href="applying-the-lm-algorithm-to-lba-data.html"><i class="fa fa-check"></i><b>6</b> Applying the LM Algorithm to LBA data</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="applying-the-lm-algorithm-to-lba-data.html"><a href="applying-the-lm-algorithm-to-lba-data.html#pl-curve"><i class="fa fa-check"></i><b>6.1</b> 5 PL curve</a></li>
+<li class="chapter" data-level="6.2" data-path="applying-the-lm-algorithm-to-lba-data.html"><a href="applying-the-lm-algorithm-to-lba-data.html#data-set"><i class="fa fa-check"></i><b>6.2</b> Data set</a></li>
+<li class="chapter" data-level="6.3" data-path="applying-the-lm-algorithm-to-lba-data.html"><a href="applying-the-lm-algorithm-to-lba-data.html#initial-parameter-estimation"><i class="fa fa-check"></i><b>6.3</b> Initial parameter estimation</a></li>
+<li class="chapter" data-level="6.4" data-path="applying-the-lm-algorithm-to-lba-data.html"><a href="applying-the-lm-algorithm-to-lba-data.html#example-of-code"><i class="fa fa-check"></i><b>6.4</b> Example of Code</a></li>
+<li class="chapter" data-level="6.5" data-path="applying-the-lm-algorithm-to-lba-data.html"><a href="applying-the-lm-algorithm-to-lba-data.html#visualization-of-the-fitting-process"><i class="fa fa-check"></i><b>6.5</b> Visualization of the fitting process</a></li>
+<li class="chapter" data-level="6.6" data-path="applying-the-lm-algorithm-to-lba-data.html"><a href="applying-the-lm-algorithm-to-lba-data.html#result"><i class="fa fa-check"></i><b>6.6</b> Result</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="evaluation-of-the-custom-code.html"><a href="evaluation-of-the-custom-code.html"><i class="fa fa-check"></i><b>7</b> Evaluation of the custom code</a></li>
+<li class="chapter" data-level="" data-path="closing-remarks.html"><a href="closing-remarks.html"><i class="fa fa-check"></i>Closing Remarks</a></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Non-linear regression</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="applying-the-lm-algorithm-to-a-damped-oscillation-model" class="section level1 hasAnchor" number="4">
+<h1><span class="header-section-number">Chapter 4</span> Applying the LM Algorithm to a Damped Oscillation Model<a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#applying-the-lm-algorithm-to-a-damped-oscillation-model" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>In this chapter, we’ll walk through how to use the <strong>Levenberg-Marquardt (LM) algorithm</strong> to fit a damped oscillation model to a set of data. This type of model is often used to represent phenomena like decaying waves or oscillations, where the amplitude decreases over time. The general form of the equation for a damped oscillation is:</p>
+<p><span class="math display">\[
+y = A \cdot e^{(-\lambda \cdot x)} \cdot \cos(\omega \cdot x + \Phi) + C
+\]</span></p>
+<p>Where:</p>
+<ul>
+<li><span class="math inline">\(A\)</span> is the amplitude (parameter 1, <span class="math inline">\(\omega_1\)</span>)</li>
+<li><span class="math inline">\(\lambda\)</span> is the decay rate (parameter 2, <span class="math inline">\(\omega_2\)</span>)</li>
+<li><span class="math inline">\(\omega\)</span> is the oscillation frequency (parameter 3, <span class="math inline">\(\omega_3\)</span>)</li>
+<li><span class="math inline">\(\Phi\)</span> is the phase shift (parameter 4, <span class="math inline">\(\omega_4\)</span>)</li>
+<li><span class="math inline">\(C\)</span> is the vertical offset (parameter 5, <span class="math inline">\(\omega_5\)</span>)</li>
+</ul>
+<p>We need to estimate these 5 parameters based on the given data. Let’s see how to do this using the <strong>LM algorithm</strong>, which helps optimize these parameters. The following libraries are necessary for running R codes:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb1-1" tabindex="-1"></a><span class="fu">library</span>(here)</span>
+<span id="cb1-2"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb1-2" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-3"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb1-3" tabindex="-1"></a><span class="fu">library</span>(gganimate)</span>
+<span id="cb1-4"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb1-4" tabindex="-1"></a><span class="fu">library</span>(minpack.lm)</span>
+<span id="cb1-5"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb1-5" tabindex="-1"></a><span class="fu">library</span>(numDeriv)</span>
+<span id="cb1-6"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb1-6" tabindex="-1"></a><span class="fu">library</span>(MASS)</span>
+<span id="cb1-7"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb1-7" tabindex="-1"></a><span class="fu">library</span>(plotly)</span>
+<span id="cb1-8"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb1-8" tabindex="-1"></a><span class="fu">library</span>(gridExtra)</span>
+<span id="cb1-9"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb1-9" tabindex="-1"></a><span class="fu">library</span>(grid)</span></code></pre></div>
+<hr />
+<div id="example-data" class="section level2 hasAnchor" number="4.1">
+<h2><span class="header-section-number">4.1</span> Example Data<a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#example-data" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Here’s the data we’ll be working with.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb2-1" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.0</span>, <span class="fl">0.69</span>, <span class="fl">1.38</span>, <span class="fl">2.07</span>, <span class="fl">2.76</span>, <span class="fl">3.45</span>, <span class="fl">4.14</span>, <span class="fl">4.83</span>, <span class="fl">5.52</span>, <span class="fl">6.21</span>, <span class="fl">6.9</span>, <span class="fl">7.59</span>, <span class="fl">8.28</span>, <span class="fl">8.97</span>, <span class="fl">9.66</span>, <span class="fl">10.34</span>, </span>
+<span id="cb2-2"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb2-2" tabindex="-1"></a>       <span class="fl">11.03</span>, <span class="fl">11.72</span>, <span class="fl">12.41</span>, <span class="fl">13.1</span>, <span class="fl">13.79</span>, <span class="fl">14.48</span>, <span class="fl">15.17</span>, <span class="fl">15.86</span>, <span class="fl">16.55</span>, <span class="fl">17.24</span>, <span class="fl">17.93</span>, <span class="fl">18.62</span>, <span class="fl">19.31</span>, <span class="fl">20.0</span>)</span></code></pre></div>
+<p>To create the corresponding <span class="math inline">\(y\)</span> values, we’ll use the formula mentioned earlier with certain parameters.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb3-1" tabindex="-1"></a>f <span class="ot">&lt;-</span> <span class="cf">function</span>(w0){</span>
+<span id="cb3-2"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb3-2" tabindex="-1"></a>  <span class="fu">return</span>(w0[<span class="dv">1</span>] <span class="sc">*</span> <span class="fu">exp</span>(<span class="sc">-</span>w0[<span class="dv">2</span>] <span class="sc">*</span> x) <span class="sc">*</span> <span class="fu">cos</span>(w0[<span class="dv">3</span>] <span class="sc">*</span> x <span class="sc">+</span> w0[<span class="dv">4</span>]) <span class="sc">+</span> w0[<span class="dv">5</span>])</span>
+<span id="cb3-3"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb3-3" tabindex="-1"></a>}</span>
+<span id="cb3-4"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb3-4" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb3-5" tabindex="-1"></a>w <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">1.9992035</span>, <span class="fl">0.1002633</span>, <span class="fl">1.2568461</span>, <span class="fl">0.4967924</span>, <span class="fl">0.9992937</span>)  <span class="co"># Real parameters</span></span>
+<span id="cb3-6"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb3-6" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="fu">f</span>(w), <span class="dv">2</span>)</span>
+<span id="cb3-7"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb3-7" tabindex="-1"></a>df_temp <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(x,y)</span></code></pre></div>
+<p>Now, let’s assume we don’t know these exact parameters but we have some <strong>initial guesses</strong> for them. For example:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb4-1" tabindex="-1"></a>w0 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="fl">0.1</span>, <span class="dv">2</span><span class="sc">*</span>pi<span class="sc">/</span><span class="dv">5</span>, <span class="fl">0.5</span>, <span class="dv">1</span>)  <span class="co"># Incorrect initial guess</span></span></code></pre></div>
+<p>This initial guess will give us a poor fit to the data, as we can see below in the graph:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb5-1" tabindex="-1"></a><span class="fu">ggplot</span>(df_temp, <span class="fu">aes</span>(x, y)) <span class="sc">+</span></span>
+<span id="cb5-2"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb5-2" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb5-3"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb5-3" tabindex="-1"></a>  <span class="fu">stat_function</span>(<span class="at">fun =</span> <span class="cf">function</span>(x) w0[<span class="dv">1</span>] <span class="sc">*</span> <span class="fu">exp</span>(<span class="sc">-</span>w0[<span class="dv">2</span>] <span class="sc">*</span> x) <span class="sc">*</span> <span class="fu">cos</span>(w0[<span class="dv">3</span>] <span class="sc">*</span> x <span class="sc">+</span> w0[<span class="dv">4</span>]) <span class="sc">+</span> w0[<span class="dv">5</span>], <span class="at">col =</span> <span class="st">&quot;red&quot;</span>, <span class="at">lty =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb5-4"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb5-4" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>The <strong>LM algorithm</strong> will help us find the correct parameters that minimize the error between the observed data and the model prediction.</p>
+<hr />
+</div>
+<div id="data-fitting-using-nlslm" class="section level2 hasAnchor" number="4.2">
+<h2><span class="header-section-number">4.2</span> Data fitting using nlsLM<a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#data-fitting-using-nlslm" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The <strong>nlsLM function</strong> in R (available from the <strong>minpack.lm</strong> package) implements the algorithm. It can optimize parameters in nonlinear least squares problems, like our damped oscillation model.</p>
+<p>To use <code>nlsLM</code>, we need to provide:</p>
+<ul>
+<li>The model function,</li>
+<li>The data,</li>
+<li>The initial guesses for the parameters.</li>
+</ul>
+<p>Here’s how we do it:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb6-1" tabindex="-1"></a>f.do <span class="ot">&lt;-</span> <span class="cf">function</span>(x, A, Lambda, Omega, Pi, C){ <span class="do">## to calculate y to use x and parameters</span></span>
+<span id="cb6-2"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb6-2" tabindex="-1"></a>    y <span class="ot">&lt;-</span> A<span class="sc">*</span><span class="fu">exp</span>(<span class="sc">-</span>Lambda<span class="sc">*</span>x)<span class="sc">*</span><span class="fu">cos</span>(Omega<span class="sc">*</span>x<span class="sc">+</span>Pi)<span class="sc">+</span>C </span>
+<span id="cb6-3"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb6-3" tabindex="-1"></a>    y</span>
+<span id="cb6-4"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb6-4" tabindex="-1"></a>}</span>
+<span id="cb6-5"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb6-5" tabindex="-1"></a>start <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">A=</span>w0[<span class="dv">1</span>], <span class="at">Lambda =</span> w0[<span class="dv">2</span>], <span class="at">Omega=</span>w0[<span class="dv">3</span>], <span class="at">Pi=</span>w0[<span class="dv">4</span>], <span class="at">C=</span>w0[<span class="dv">5</span>])</span>
+<span id="cb6-6"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb6-6" tabindex="-1"></a>m <span class="ot">&lt;-</span> <span class="fu">nlsLM</span>(y <span class="sc">~</span> <span class="fu">f.do</span>(x,  A, Lambda, Omega, Pi, C), <span class="at">data =</span> df_temp, <span class="at">start =</span> start)</span>
+<span id="cb6-7"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb6-7" tabindex="-1"></a><span class="fu">summary</span>(m)</span></code></pre></div>
+<pre><code>## 
+## Formula: y ~ f.do(x, A, Lambda, Omega, Pi, C)
+## 
+## Parameters:
+##         Estimate Std. Error t value Pr(&gt;|t|)    
+## A      1.9998538  0.0021139   946.1   &lt;2e-16 ***
+## Lambda 0.1001776  0.0001714   584.5   &lt;2e-16 ***
+## Omega  1.2565776  0.0001783  7048.5   &lt;2e-16 ***
+## Pi     0.4980359  0.0010815   460.5   &lt;2e-16 ***
+## C      0.9997494  0.0005270  1896.9   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.002829 on 25 degrees of freedom
+## 
+## Number of iterations to convergence: 3 
+## Achieved convergence tolerance: 1.49e-08</code></pre>
+<p>After running this, the algorithm returns optimized parameters that are very close to the real values we started with. The iteration cycle is just 3 iterations, showing that the algorithm is efficient and quickly finds the best parameters.</p>
+<p>The optimized parameters are almost identical to the real values used to generate the data:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb8-1" tabindex="-1"></a>n1 <span class="ot">&lt;-</span> <span class="fu">unlist</span>(<span class="fu">coef</span>(m))</span>
+<span id="cb8-2"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb8-2" tabindex="-1"></a>n1</span></code></pre></div>
+<pre><code>##         A    Lambda     Omega        Pi         C 
+## 1.9998538 0.1001776 1.2565776 0.4980359 0.9997494</code></pre>
+<p>Now, we can visualize the result. The optimized parameters (black line) fit the data much better than the initial guess (red line), as shown below:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb10-1" tabindex="-1"></a><span class="fu">ggplot</span>(df_temp, <span class="fu">aes</span>(x, y)) <span class="sc">+</span></span>
+<span id="cb10-2"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb10-2" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb10-3"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb10-3" tabindex="-1"></a>  <span class="fu">stat_function</span>(<span class="at">fun =</span> <span class="cf">function</span>(x) w0[<span class="dv">1</span>] <span class="sc">*</span> <span class="fu">exp</span>(<span class="sc">-</span>w0[<span class="dv">2</span>] <span class="sc">*</span> x) <span class="sc">*</span> <span class="fu">cos</span>(w0[<span class="dv">3</span>] <span class="sc">*</span> x <span class="sc">+</span> w0[<span class="dv">4</span>]) <span class="sc">+</span> w0[<span class="dv">5</span>], <span class="at">col =</span> <span class="st">&quot;red&quot;</span>, <span class="at">lty =</span> <span class="dv">2</span>) <span class="sc">+</span>  <span class="co"># Initial guess</span></span>
+<span id="cb10-4"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb10-4" tabindex="-1"></a>  <span class="fu">stat_function</span>(<span class="at">fun =</span> <span class="cf">function</span>(x) n1[<span class="dv">1</span>] <span class="sc">*</span> <span class="fu">exp</span>(<span class="sc">-</span>n1[<span class="dv">2</span>] <span class="sc">*</span> x) <span class="sc">*</span> <span class="fu">cos</span>(n1[<span class="dv">3</span>] <span class="sc">*</span> x <span class="sc">+</span> n1[<span class="dv">4</span>]) <span class="sc">+</span> n1[<span class="dv">5</span>], <span class="at">col =</span> <span class="st">&quot;black&quot;</span>, <span class="at">lty =</span> <span class="dv">2</span>) <span class="sc">+</span>  <span class="co"># Optimized result</span></span>
+<span id="cb10-5"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb10-5" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<hr />
+</div>
+<div id="how-the-algorithm-works" class="section level2 hasAnchor" number="4.3">
+<h2><span class="header-section-number">4.3</span> How the Algorithm Works<a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#how-the-algorithm-works" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The algorithm is a <strong>hybrid method</strong> that combines the <strong>Gauss-Newton method</strong> and <strong>gradient descent method</strong>. It is used to find the best-fitting parameters for models that involve nonlinear relationships, like our damped oscillation model. Here’s a basic breakdown of how the algorithm works:</p>
+<ol style="list-style-type: decimal">
+<li><p><strong>Initial Parameters</strong>: The algorithm starts with an initial guess for the parameters.</p></li>
+<li><p><strong>Model Evaluation</strong>: The model (i.e., our damped oscillation formula) is evaluated with these initial parameters, and the error between the predicted values and the actual data is calculated (this is usually the <strong>chi-squared error</strong>).</p></li>
+<li><p><strong>Jacobian Matrix</strong>: The algorithm computes the <strong>Jacobian matrix</strong>, which describes how sensitive the model is to changes in each parameter.</p></li>
+<li><p><strong>Adjusting Parameters</strong>: Based on the Jacobian and the error, the algorithm updates the parameters to minimize the error. It adjusts the parameters using a mixture of <strong>Gauss-Newton</strong> (which is fast but can be unstable) and <strong>gradient descent</strong> (which is slower but more stable).</p></li>
+<li><p><strong>Convergence</strong>: This process is repeated, adjusting the parameters until the error becomes small enough, indicating that the model has converged to the optimal parameter values.</p></li>
+</ol>
+<hr />
+</div>
+<div id="custom-implementation-of-the-algorithm" class="section level2 hasAnchor" number="4.4">
+<h2><span class="header-section-number">4.4</span> Custom Implementation of the Algorithm<a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#custom-implementation-of-the-algorithm" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>To understand how the <code>nlsLM</code>function works, we can implement a simplified version of the algorithm ourselves in R. Below is a my custom implementation, where we control the damping factor <span class="math inline">\(\mu\)</span> and adjust it during the iterations.</p>
+<hr />
+</div>
+<div id="convergence-criteria-of-the-algorithm" class="section level2 hasAnchor" number="4.5">
+<h2><span class="header-section-number">4.5</span> Convergence Criteria of the Algorithm<a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#convergence-criteria-of-the-algorithm" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>In the algorithm, the goal is to iteratively adjust the model parameters (<code>w</code>) so that the model’s predictions closely match the observed data. The algorithm stops iterating when it meets certain <strong>convergence criteria</strong> — conditions that indicate the algorithm has found a good solution. These conditions are based on different aspects of the optimization process.<br />
+Here are the convergence criteria used in my code:</p>
+<ol style="list-style-type: decimal">
+<li><strong>Actual and Predicted Relative Reduction in Chi-Squared</strong></li>
+</ol>
+<ul>
+<li><p>The <strong>actual relative reduction (ARD)</strong> is the <strong>change in chi-squared</strong> based on the real improvement from the current model to the next model after parameter updates. It’s computed as: <span class="math display">\[
+\text{actual.relative.reduction} = \frac{\text{previous.chisq} - \text{chisq.new}}{\text{previous.chisq}}
+\]</span></p></li>
+<li><p>Here, <code>previous.chisq</code> is the chi-squared value from the previous iteration (or from the initial iteration), and <code>chisq.new</code> is the chi-squared value after the parameter update.</p></li>
+<li><p>The <strong>ARD</strong> tells us how much the chi-squared has improved due to the changes in the model’s parameters.</p></li>
+<li><p>The <strong>predicted relative reduction (PRD)</strong> is an estimate of the expected reduction in chi-squared, based on the <strong>Jacobian matrix</strong> and the model’s current residuals. It is computed as:</p></li>
+</ul>
+<p><span class="math display">\[
+\text{predicted.relative.reduction} = \frac{\chi^2(\theta_{old})-\chi^2(\theta_{new})}{|d^T_{k}\cdot(damp \cdot d_k + J^Tr)|}
+\]</span></p>
+<ul>
+<li><p>This prediction is made based on the current parameter update and the model’s <strong>Jacobian matrix</strong>.</p></li>
+<li><p>It estimates how much the chi-squared is expected to change based on the current step size and damping. In some cases, the <strong>predicted reduction</strong> can indicate whether a larger or smaller parameter update is required.</p></li>
+<li><p>To ensure that the algorithm has converged, both <strong>ARD</strong> and <strong>PRD</strong> must be below a specified threshold (commonly denoted as <code>ftol</code>). This signals that further iterations will not yield significant improvements in the fit. The algorithm will terminate when the following conditions are met:</p></li>
+<li><p><strong>Convergence Condition</strong>: The algorithm will stop if both the <strong>ARD</strong> and the <strong>PRD</strong> are below <code>ftol</code>: <span class="math display">\[
+\text{actual.relative.reduction} &lt; \text{ftol} \quad \text{and} \quad p &lt; \text{ftol}
+\]</span></p></li>
+<li><p><strong><code>ftol</code></strong> is a small positive number (e.g., <span class="math inline">\(1 \times 10^{-6}\)</span>), which sets the tolerance level for the relative decrease in chi-squared. If both the actual and predicted reductions are smaller than this threshold, it indicates that the optimization has plateaued, meaning no significant improvement is expected in subsequent iterations.</p></li>
+<li><p><strong>Why Two Criteria?</strong></p>
+<ul>
+<li><strong>ARD</strong> measures how much the chi-squared has decreased in reality after the parameter update. If this value is very small, it means that the model is no longer significantly improving.</li>
+<li><strong>PRD</strong> estimates how much the chi-squared is expected to decrease in the next iteration, based on the current model’s residuals and the Jacobian matrix. If the predicted reduction is small, it means that the algorithm expects little improvement, even if it continues.</li>
+</ul></li>
+<li><p>By comparing both reductions (actual and predicted), the algorithm avoids prematurely stopping when only one of them is small but still allows for stopping when both suggest minimal improvement.</p></li>
+</ul>
+<hr />
+<ol start="2" style="list-style-type: decimal">
+<li><strong>Relative Error in Parameter Updates (<code>RE</code>)</strong>:</li>
+</ol>
+<ul>
+<li>This is the largest relative change in the model parameters (<code>dk</code>), normalized by the size of the current parameter values (<code>w</code>).</li>
+<li>If the changes in the model parameters are very small (below a threshold, <code>ptol</code>), it means that the parameters have stabilized, and further iterations are unlikely to improve the model significantly.</li>
+</ul>
+<hr />
+<ol start="3" style="list-style-type: decimal">
+<li><strong>Cosine Angles Between Residuals and Jacobian Columns (<code>CA</code>)</strong>:</li>
+</ol>
+<ul>
+<li><p>The cosine angles measure how closely the residuals (differences between the predicted and observed values) align with the columns of the <strong>Jacobian matrix</strong> (which represents the sensitivity of the model to each parameter).</p></li>
+<li><p>If the cosine angles are very small, it indicates that the parameter updates are not pointing in a useful direction for improving the fit (i.e., the algorithm is “stuck”).</p></li>
+<li><p>The algorithm stops when the cosine angles are below a threshold (<code>gtol</code>).</p></li>
+</ul>
+<hr />
+<ol start="4" style="list-style-type: decimal">
+<li><strong>Parameter updating and adjusting</strong> <span class="math inline">\(\mu\)</span>:</li>
+</ol>
+<ul>
+<li>In order to update parameters, the goodness-of-fit is evaluated by computation of the <strong>predicted relative reduction</strong>:</li>
+</ul>
+<p>where,</p>
+<ul>
+<li><p><span class="math inline">\(\lambda_i\)</span> is <span class="math inline">\(\mu_i\)</span>,</p></li>
+<li><p>If <span class="math inline">\(\lambda_0\)</span> = <span class="math inline">\(\lambda_o\)</span> is the default set (1e-2) and</p></li>
+<li><p>If PRD &gt; 0 and <span class="math inline">\(\alpha\)</span> = <span class="math inline">\(\alpha\)</span>+<span class="math inline">\(h_{lm}\)</span> and <span class="math inline">\(\lambda_{i+1}\)</span> = max[<span class="math inline">\(\lambda_i\)</span>/<span class="math inline">\(L_{1}\)</span>, 1e-7],</p></li>
+<li><p>Otherwise <span class="math inline">\(\lambda_i\)</span> = min[<span class="math inline">\(\lambda_i\)</span> <span class="math inline">\(L_{2}\)</span>, 1e7]</p></li>
+<li><p><span class="math inline">\(L_{1} \approx9\)</span> and <span class="math inline">\(L_{2} \approx 11\)</span></p></li>
+</ul>
+<hr />
+<ol start="5" style="list-style-type: decimal">
+<li><strong>Weight</strong> <span class="math inline">\(W\)</span>:</li>
+</ol>
+<ul>
+<li>I do not apply weights, even for <code>nlsLM</code>, because not applying weights is equivalent to multiplying by 1, which does not affect the result.</li>
+</ul>
+<hr />
+<ol start="6" style="list-style-type: decimal">
+<li><strong>Convergence</strong></li>
+</ol>
+<p>The custom code will stop if any of the following conditions are met:</p>
+<ul>
+<li><p>The <strong>relative reduction in chi-squared</strong> is very small (i.e., the model is no longer improving significantly).</p></li>
+<li><p>The <strong>relative error</strong> in the parameter updates is very small (i.e., the parameters are not changing much).</p></li>
+<li><p>The <strong>cosine angles</strong> between residuals and Jacobian columns are small (i.e., the updates are not pointing in a useful direction).</p></li>
+</ul>
+<hr />
+</div>
+<div id="code-example" class="section level2 hasAnchor" number="4.6">
+<h2><span class="header-section-number">4.6</span> Code Example<a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#code-example" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-1" tabindex="-1"></a>LM.custom <span class="ot">&lt;-</span> <span class="cf">function</span>(w0, data) {</span>
+<span id="cb11-2"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-2" tabindex="-1"></a>  w <span class="ot">&lt;-</span> w.previous <span class="ot">&lt;-</span> w0</span>
+<span id="cb11-3"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-3" tabindex="-1"></a>  k <span class="ot">&lt;-</span> <span class="dv">0</span>    </span>
+<span id="cb11-4"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-4" tabindex="-1"></a>  feval <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb11-5"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-5" tabindex="-1"></a>  mu <span class="ot">&lt;-</span> <span class="fl">1e-2</span>  </span>
+<span id="cb11-6"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-6" tabindex="-1"></a>  ftol <span class="ot">&lt;-</span> <span class="fl">1e-6</span></span>
+<span id="cb11-7"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-7" tabindex="-1"></a>  ptol <span class="ot">&lt;-</span> <span class="fl">1e-6</span></span>
+<span id="cb11-8"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-8" tabindex="-1"></a>  gtol <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb11-9"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-9" tabindex="-1"></a>  maxiter <span class="ot">&lt;-</span> <span class="dv">200</span></span>
+<span id="cb11-10"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-10" tabindex="-1"></a>  maxfev <span class="ot">&lt;-</span> <span class="dv">600</span></span>
+<span id="cb11-11"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-11" tabindex="-1"></a>  </span>
+<span id="cb11-12"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-12" tabindex="-1"></a>  x <span class="ot">&lt;-</span> data<span class="sc">$</span>x</span>
+<span id="cb11-13"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-13" tabindex="-1"></a>  y <span class="ot">&lt;-</span> data<span class="sc">$</span>y</span>
+<span id="cb11-14"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-14" tabindex="-1"></a>  </span>
+<span id="cb11-15"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-15" tabindex="-1"></a>  f <span class="ot">&lt;-</span> <span class="cf">function</span>(w0){</span>
+<span id="cb11-16"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-16" tabindex="-1"></a>    model <span class="ot">&lt;-</span> (w0[<span class="dv">1</span>]<span class="sc">*</span><span class="fu">exp</span>(<span class="sc">-</span>w0[<span class="dv">2</span>]<span class="sc">*</span>x)<span class="sc">*</span><span class="fu">cos</span>(w0[<span class="dv">3</span>]<span class="sc">*</span>x <span class="sc">+</span> w0[<span class="dv">4</span>]) <span class="sc">+</span> w0[<span class="dv">5</span>])</span>
+<span id="cb11-17"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-17" tabindex="-1"></a>    <span class="fu">return</span>(model)</span>
+<span id="cb11-18"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-18" tabindex="-1"></a>  }</span>
+<span id="cb11-19"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-19" tabindex="-1"></a></span>
+<span id="cb11-20"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-20" tabindex="-1"></a>  chi.squre.fn <span class="ot">&lt;-</span> <span class="cf">function</span>(w) {</span>
+<span id="cb11-21"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-21" tabindex="-1"></a>    chi.sq <span class="ot">&lt;-</span> <span class="fu">sum</span>((y <span class="sc">-</span> <span class="fu">f</span>(w))<span class="sc">^</span><span class="dv">2</span>)  </span>
+<span id="cb11-22"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-22" tabindex="-1"></a>    <span class="fu">return</span>(chi.sq)</span>
+<span id="cb11-23"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-23" tabindex="-1"></a>  }</span>
+<span id="cb11-24"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-24" tabindex="-1"></a></span>
+<span id="cb11-25"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-25" tabindex="-1"></a>  norm.fn <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="fu">sqrt</span>(<span class="fu">sum</span>(x<span class="sc">^</span><span class="dv">2</span>))</span>
+<span id="cb11-26"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-26" tabindex="-1"></a>  initial.chisq <span class="ot">&lt;-</span> previous.chisq <span class="ot">&lt;-</span> <span class="fu">chi.squre.fn</span>(w)   </span>
+<span id="cb11-27"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-27" tabindex="-1"></a>  </span>
+<span id="cb11-28"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-28" tabindex="-1"></a>  calculate.cosine.angles <span class="ot">&lt;-</span> <span class="cf">function</span>(y, w) {</span>
+<span id="cb11-29"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-29" tabindex="-1"></a>    r <span class="ot">&lt;-</span> y <span class="sc">-</span> <span class="fu">f</span>(w)  </span>
+<span id="cb11-30"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-30" tabindex="-1"></a>    J <span class="ot">&lt;-</span> numDeriv<span class="sc">::</span><span class="fu">jacobian</span>(f, w)  </span>
+<span id="cb11-31"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-31" tabindex="-1"></a>    norm.r <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">sum</span>(r<span class="sc">^</span><span class="dv">2</span>)) </span>
+<span id="cb11-32"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-32" tabindex="-1"></a>    cosine.angles <span class="ot">&lt;-</span> <span class="fu">numeric</span>(<span class="fu">ncol</span>(J))  </span>
+<span id="cb11-33"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-33" tabindex="-1"></a>    <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(J)) {</span>
+<span id="cb11-34"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-34" tabindex="-1"></a>      J.col <span class="ot">&lt;-</span> J[, i] </span>
+<span id="cb11-35"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-35" tabindex="-1"></a>      norm.J.col <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">sum</span>(J.col<span class="sc">^</span><span class="dv">2</span>))  </span>
+<span id="cb11-36"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-36" tabindex="-1"></a>      dot.product <span class="ot">&lt;-</span> <span class="fu">sum</span>(J.col <span class="sc">*</span> r)</span>
+<span id="cb11-37"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-37" tabindex="-1"></a>      cosine.angles[i] <span class="ot">&lt;-</span> dot.product <span class="sc">/</span> (norm.J.col <span class="sc">*</span> norm.r)</span>
+<span id="cb11-38"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-38" tabindex="-1"></a>    }</span>
+<span id="cb11-39"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-39" tabindex="-1"></a>    <span class="fu">return</span>(cosine.angles)</span>
+<span id="cb11-40"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-40" tabindex="-1"></a>  }</span>
+<span id="cb11-41"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-41" tabindex="-1"></a></span>
+<span id="cb11-42"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-42" tabindex="-1"></a>  <span class="cf">while</span> (k <span class="sc">&lt;</span> maxiter <span class="sc">&amp;&amp;</span> feval <span class="sc">&lt;</span> maxfev) {</span>
+<span id="cb11-43"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-43" tabindex="-1"></a>    J <span class="ot">&lt;-</span> numDeriv<span class="sc">::</span><span class="fu">jacobian</span>(f, w, <span class="at">method =</span> <span class="st">&quot;Richardson&quot;</span>)</span>
+<span id="cb11-44"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-44" tabindex="-1"></a>    r1 <span class="ot">&lt;-</span> y <span class="sc">-</span> <span class="fu">f</span>(w) </span>
+<span id="cb11-45"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-45" tabindex="-1"></a>    Jr <span class="ot">&lt;-</span> <span class="fu">t</span>(J) <span class="sc">%*%</span> r1</span>
+<span id="cb11-46"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-46" tabindex="-1"></a>    feval <span class="ot">&lt;-</span> feval <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb11-47"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-47" tabindex="-1"></a>    </span>
+<span id="cb11-48"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-48" tabindex="-1"></a>    <span class="cf">if</span> (feval <span class="sc">==</span> maxfev) {</span>
+<span id="cb11-49"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-49" tabindex="-1"></a>      <span class="fu">cat</span>(<span class="st">&quot;Number of function evaluations reached: &quot;</span>, feval, <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb11-50"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-50" tabindex="-1"></a>      <span class="cf">break</span></span>
+<span id="cb11-51"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-51" tabindex="-1"></a>    }</span>
+<span id="cb11-52"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-52" tabindex="-1"></a></span>
+<span id="cb11-53"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-53" tabindex="-1"></a>    JTJ <span class="ot">&lt;-</span> <span class="fu">t</span>(J) <span class="sc">%*%</span> J <span class="sc">+</span> mu <span class="sc">*</span> <span class="fu">diag</span>(<span class="fu">ncol</span>(J))  </span>
+<span id="cb11-54"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-54" tabindex="-1"></a>    damp <span class="ot">&lt;-</span> mu <span class="sc">*</span> <span class="fu">diag</span>(<span class="fu">ncol</span>(JTJ))</span>
+<span id="cb11-55"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-55" tabindex="-1"></a>    JTJ.inv <span class="ot">&lt;-</span> <span class="fu">tryCatch</span>({</span>
+<span id="cb11-56"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-56" tabindex="-1"></a>      <span class="fu">qr.solve</span>(JTJ)</span>
+<span id="cb11-57"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-57" tabindex="-1"></a>    }, <span class="at">error =</span> <span class="cf">function</span>(e) {</span>
+<span id="cb11-58"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-58" tabindex="-1"></a>      <span class="fu">ginv</span>(JTJ)</span>
+<span id="cb11-59"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-59" tabindex="-1"></a>    })</span>
+<span id="cb11-60"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-60" tabindex="-1"></a>    </span>
+<span id="cb11-61"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-61" tabindex="-1"></a>    dk <span class="ot">&lt;-</span> JTJ.inv <span class="sc">%*%</span> Jr </span>
+<span id="cb11-62"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-62" tabindex="-1"></a>    w1 <span class="ot">&lt;-</span> w <span class="sc">+</span> dk </span>
+<span id="cb11-63"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-63" tabindex="-1"></a></span>
+<span id="cb11-64"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-64" tabindex="-1"></a>    chisq.new <span class="ot">&lt;-</span> <span class="fu">chi.squre.fn</span>(w1) </span>
+<span id="cb11-65"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-65" tabindex="-1"></a>    actual.relative.reduction <span class="ot">&lt;-</span> <span class="fu">abs</span>(initial.chisq <span class="sc">-</span> chisq.new) <span class="sc">/</span> initial.chisq</span>
+<span id="cb11-66"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-66" tabindex="-1"></a>    predicted.relative.reduction <span class="ot">&lt;-</span> p <span class="ot">&lt;-</span> (previous.chisq <span class="sc">-</span> chisq.new) <span class="sc">/</span> <span class="fu">abs</span>(<span class="fu">t</span>(dk) <span class="sc">%*%</span> (damp <span class="sc">%*%</span> dk <span class="sc">+</span> Jr))</span>
+<span id="cb11-67"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-67" tabindex="-1"></a>    relative.error <span class="ot">&lt;-</span> <span class="fu">max</span>(<span class="fu">abs</span>(w1 <span class="sc">-</span> w.previous)) <span class="sc">/</span> <span class="fu">max</span>(<span class="fu">abs</span>(w.previous))  </span>
+<span id="cb11-68"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-68" tabindex="-1"></a>    cosine.angles <span class="ot">&lt;-</span> <span class="fu">calculate.cosine.angles</span>(y, w)</span>
+<span id="cb11-69"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-69" tabindex="-1"></a> </span>
+<span id="cb11-70"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-70" tabindex="-1"></a>    convergence_result <span class="ot">&lt;-</span> <span class="fu">c</span>()</span>
+<span id="cb11-71"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-71" tabindex="-1"></a>    convergence <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
+<span id="cb11-72"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-72" tabindex="-1"></a>      <span class="cf">if</span> (actual.relative.reduction <span class="sc">&lt;</span> ftol <span class="sc">&amp;</span> p <span class="sc">&lt;</span> ftol) {</span>
+<span id="cb11-73"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-73" tabindex="-1"></a>        <span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">&quot;ARD:&quot;</span>, actual.relative.reduction, <span class="st">&quot;PRD:&quot;</span>, p))</span>
+<span id="cb11-74"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-74" tabindex="-1"></a>      } <span class="cf">else</span> <span class="cf">if</span> (relative.error <span class="sc">&lt;</span> ptol) {</span>
+<span id="cb11-75"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-75" tabindex="-1"></a>        <span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">&quot;RE:&quot;</span>, relative.error))</span>
+<span id="cb11-76"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-76" tabindex="-1"></a>      } <span class="cf">else</span> {</span>
+<span id="cb11-77"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-77" tabindex="-1"></a>        <span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">&quot;CA:&quot;</span>, cosine.angles))</span>
+<span id="cb11-78"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-78" tabindex="-1"></a>      } </span>
+<span id="cb11-79"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-79" tabindex="-1"></a>    }</span>
+<span id="cb11-80"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-80" tabindex="-1"></a></span>
+<span id="cb11-81"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-81" tabindex="-1"></a>    <span class="cf">if</span> (actual.relative.reduction <span class="sc">&lt;</span> ftol <span class="sc">&amp;</span> p <span class="sc">&lt;</span> ftol <span class="sc">||</span> relative.error <span class="sc">&lt;</span> ptol <span class="sc">||</span> <span class="fu">max</span>(<span class="fu">abs</span>(cosine.angles)) <span class="sc">&lt;</span> gtol) {</span>
+<span id="cb11-82"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-82" tabindex="-1"></a>      convergence_result <span class="ot">&lt;-</span> <span class="fu">convergence</span>()</span>
+<span id="cb11-83"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-83" tabindex="-1"></a>      <span class="cf">break</span></span>
+<span id="cb11-84"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-84" tabindex="-1"></a>    }</span>
+<span id="cb11-85"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-85" tabindex="-1"></a></span>
+<span id="cb11-86"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-86" tabindex="-1"></a>    <span class="cf">if</span> (p <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb11-87"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-87" tabindex="-1"></a>      mu <span class="ot">&lt;-</span> <span class="fu">max</span>(mu <span class="sc">/</span> <span class="dv">9</span>, <span class="fl">1e-7</span>)  </span>
+<span id="cb11-88"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-88" tabindex="-1"></a>      w.previous <span class="ot">&lt;-</span> w  </span>
+<span id="cb11-89"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-89" tabindex="-1"></a>      w <span class="ot">&lt;-</span> w1  </span>
+<span id="cb11-90"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-90" tabindex="-1"></a>    } <span class="cf">else</span> { </span>
+<span id="cb11-91"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-91" tabindex="-1"></a>      mu <span class="ot">&lt;-</span> <span class="fu">min</span>(mu <span class="sc">*</span> <span class="dv">11</span>, <span class="fl">1e7</span>)  </span>
+<span id="cb11-92"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-92" tabindex="-1"></a>    }</span>
+<span id="cb11-93"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-93" tabindex="-1"></a>    </span>
+<span id="cb11-94"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-94" tabindex="-1"></a>    k <span class="ot">&lt;-</span> k <span class="sc">+</span> <span class="dv">1</span> </span>
+<span id="cb11-95"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-95" tabindex="-1"></a>    previous.chisq <span class="ot">&lt;-</span> chisq.new  </span>
+<span id="cb11-96"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-96" tabindex="-1"></a>  }</span>
+<span id="cb11-97"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-97" tabindex="-1"></a>  </span>
+<span id="cb11-98"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-98" tabindex="-1"></a>  sigma.sq <span class="ot">&lt;-</span> <span class="fu">sum</span>(r1<span class="sc">^</span><span class="dv">2</span>) <span class="sc">/</span> (<span class="fu">length</span>(y) <span class="sc">-</span> <span class="fu">length</span>(w)) </span>
+<span id="cb11-99"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-99" tabindex="-1"></a>  cov.matrix <span class="ot">&lt;-</span> <span class="fu">ginv</span>(JTJ) <span class="sc">*</span> sigma.sq</span>
+<span id="cb11-100"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-100" tabindex="-1"></a>  se <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">diag</span>(cov.matrix))</span>
+<span id="cb11-101"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-101" tabindex="-1"></a></span>
+<span id="cb11-102"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-102" tabindex="-1"></a>  result <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">parameters =</span> w, </span>
+<span id="cb11-103"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-103" tabindex="-1"></a>                 <span class="at">standard.errors =</span> se, </span>
+<span id="cb11-104"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-104" tabindex="-1"></a>                 <span class="at">iteration =</span> k, </span>
+<span id="cb11-105"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-105" tabindex="-1"></a>                 <span class="at">convergence.result =</span>  convergence_result)  </span>
+<span id="cb11-106"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-106" tabindex="-1"></a>  <span class="fu">return</span>(result)</span>
+<span id="cb11-107"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb11-107" tabindex="-1"></a>}</span></code></pre></div>
+<hr />
+<p>To run the code, do as shown below.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb12-1" tabindex="-1"></a><span class="fu">LM.custom</span>(w0, df_temp)</span></code></pre></div>
+<pre><code>## [1] &quot;RE: 1.12795454748581e-09&quot;</code></pre>
+<pre><code>## $parameters
+##           [,1]
+## [1,] 1.9998538
+## [2,] 0.1001776
+## [3,] 1.2565776
+## [4,] 0.4980359
+## [5,] 0.9997494
+## 
+## $standard.errors
+## [1] 0.0021138956 0.0001713882 0.0001782752 0.0010815145 0.0005270499
+## 
+## $iteration
+## [1] 4
+## 
+## $convergence.result
+## [1] &quot;RE: 1.12795454748581e-09&quot;</code></pre>
+<hr />
+<p>The custom version of the algorithm also returns very similar results to the nlsLM estimated result (refer to the below) showing that the algorithm is efficient and quickly finds the best parameters.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb15-1" tabindex="-1"></a>n1</span></code></pre></div>
+<pre><code>##         A    Lambda     Omega        Pi         C 
+## 1.9998538 0.1001776 1.2565776 0.4980359 0.9997494</code></pre>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="levenberg-marquardt-lm-algorithm.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="applying-the-algorithm-to-a-sphere-function-model.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+  "sharing": {
+    "github": false,
+    "facebook": true,
+    "twitter": true,
+    "linkedin": false,
+    "weibo": false,
+    "instapaper": false,
+    "vk": false,
+    "whatsapp": false,
+    "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+  },
+  "fontsettings": {
+    "theme": "white",
+    "family": "sans",
+    "size": 2
+  },
+  "edit": {
+    "link": "https://github.com/USERNAME/REPO/edit/BRANCH/04-DampedOscilation.Rmd",
+    "text": "Edit"
+  },
+  "history": {
+    "link": null,
+    "text": null
+  },
+  "view": {
+    "link": null,
+    "text": null
+  },
+  "download": ["_main.HTML"],
+  "search": {
+    "engine": "fuse",
+    "options": null
+  },
+  "toc": {
+    "collapse": "subsection"
+  }
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

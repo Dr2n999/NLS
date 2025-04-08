@@ -1,0 +1,177 @@
+# The Gradient descent method
+
+Let's assume that we're working with a non-linear model where $\hat{y} = f(\alpha)$, and $\hat{y}$ is the predicted value based on the model parameters $\alpha$. In regression, we seek the set of parameters $\alpha$ that best fit the observed data $y_i$​. The residuals (differences between the observed values and the model predictions) can be weighted by their associated uncertainties, $\sigma_i$​, because data points with smaller uncertainties should contribute more to the fit. To quantify the goodness-of-fit, we use the **chi-squared function**. It is not only a fitting tool but also the very cost function for non-linear model which defined as the following: $$
+\chi^2(\alpha) = \sum_{i} \frac{(y_i - \hat{y}_i(\alpha))^2}{\sigma_i^2}
+$$ where:
+
+-   $y_i$ is the observed value for the $i$-th data point,
+-   $\hat{y}_i(a)$ is the predicted value for the $i$-th data point,
+-   $\sigma_i^2$ is the variance (or uncertainty) for the $i$-th data point,
+-   $\alpha$ is the parameter(s) for the function,
+
+The chi-squared function reflects the weighted sum of squared residuals, and minimizing it corresponds to finding the optimal set of parameters $\alpha$ that best match the data, accounting for the uncertainty in each measurement.
+
+To find the optimal parameters we compute the gradient of the chi-squared function with respect to $\alpha$ and update $\alpha$ iteratively using gradient descent. This method adjusts $\alpha$ in the direction of the steepest descent (the negative gradient), progressively improving the fit to the data until the function reaches a minimum. This process allows us to efficiently find the values of $\alpha$ that minimize the discrepancy between the model and the data while incorporating uncertainties.
+
+## Computation of the chi-squared function
+
+It can be simplified as the following:
+
+$$\chi^2(\alpha) = \begin{bmatrix}r_1 & r_2 & \cdots & r_{n-1} & r_{n} \end{bmatrix}\begin{bmatrix} \frac{1}{\sigma_i^2} & \cdots & 0 \\\vdots & \ddots & \vdots \\0 & \cdots & \frac{1}{\sigma_n^2}\end{bmatrix}\begin{bmatrix} r_1 \\ r_2 \\ \vdots  \\ r_{n-1} \\ r_{n} \end{bmatrix} $$
+
+-   $r_{i}$ is the residual for the $i$-th data point that is $y-\hat y_i(\alpha)$ and thus its squares is $r_i^2$ .
+
+-   $\frac{1}{\sigma_i^2}$ is the weighted residuals of each data point and also the diagonal elements being the inverse of the variances $\sigma_i^2$, expressed as $W = \text{diag} \left( \frac{1}{\sigma_1^2}, \frac{1}{\sigma_2^2}, \dots, \frac{1}{\sigma_n^2} \right)$ or
+
+$$\begin{bmatrix} \frac{1}{\sigma_i^2} & \cdots & 0 \\\vdots & \ddots & \vdots \\0 & \cdots & \frac{1}{\sigma_n^2}\end{bmatrix} $$
+
+-   So $\chi^2(\alpha) = \sum_{i} \frac{(y_i - \hat{y}_i(\alpha))^2}{\sigma_i^2}$ can be rewritten simply as $\chi^2(\alpha) = \sum_{i}{r_i^2}W$.
+
+-   The right section $\sum_ir_i^2W$ can also be rewritten simply as $r^TWr$ since $r$ is a column vector of each residuals:
+
+$$ \begin{bmatrix} r_1 \\ r_2 \\ \vdots  \\ r_{n-1} \\ r_{n} \end{bmatrix} $$
+
+-   And the $r^T$ is a transposed vector of the residual vector thus a row vector:
+
+$$ \begin{bmatrix}r_1 & r_2 & \cdots & r_{n-1} & r_{n} \end{bmatrix}$$
+
+-   And so it can be finally rewritten as $\chi^2(\alpha) = r^TWr$ and therefore be:
+
+$$
+\chi^2(\alpha) = \begin{bmatrix}r_1 & r_2 & \cdots & r_{n-1} & r_{n} \end{bmatrix}\begin{bmatrix} \frac{1}{\sigma_i^2} & \cdots & 0 \\\vdots & \ddots & \vdots \\0 & \cdots & \frac{1}{\sigma_n^2}\end{bmatrix}\begin{bmatrix} r_1 \\ r_2 \\ \vdots  \\ r_{n-1} \\ r_{n} \end{bmatrix} 
+$$
+
+-   And that will return a scalar (single value) that the sum of weighted squared residuals.
+
+## Computation of the gradient
+
+It is known that the gradient of $\chi^2(a)$ with respect to $a$ is:
+
+$$ \frac{\partial \chi^2(\alpha)}{\partial \alpha} = -2(y-\hat y)^TWJ $$
+
+and is the direction in which we want to move $a$ to minimize $\chi^2(a)$.
+
+Let's beak down to see how we can get the gradient. We can rewrite the chi squared function as:
+
+$$ \chi^2(\alpha) = r^TWr = (y-\hat y(\alpha))^TW(y-\hat y(\alpha)) $$
+
+-   The far right terms can be expanded as:\
+    $$  (y^TWy-y^TW\hat y(\alpha)-\hat y^T(\alpha)Wy+\hat y^T(\alpha)W\hat y(\alpha)  $$
+
+-   The second and third therms will result in the same scalar value and therefore be expressed as: $$ -2y^TW\hat y(\alpha)  $$
+
+-   Combining all:\
+    $$ \chi^2(a) = y^T W y - 2 y^T W \hat{y}(\alpha) + \hat{y}^T(\alpha) W \hat{y}(\alpha) $$
+
+-   Or simply:
+
+$$ \chi^2(a) = y^T W y - 2 y^T W \hat{y} + \hat{y}^T W \hat{y} $$
+
+-   The gradient of $\chi^2(a)$ with respect to $a$ is the partial derivation of that with respect to $\alpha$ so the first section is:
+
+$$\frac{\partial y^T W y}{\partial \alpha} = 0$$
+
+-   The second section:
+
+$$ \frac{\partial }{\partial \alpha}(-2 y^T W \hat{y}) = -2 y^T W\frac{\partial \hat y  }{\partial \alpha} $$
+
+-   The third section:
+
+$$ \frac{\partial  }{\partial \alpha}(\hat{y}^T W \hat{y}) = -2 \hat y^T W\frac{\partial \hat y}{\partial \alpha} $$
+
+-   Thus,
+
+$$ \frac{\partial \chi^2(\alpha)}{\partial \alpha} =  0-2 y^T W\frac{\partial \hat y} {\partial \alpha} -2 \hat y^T W\frac{\partial \hat y}{\partial \alpha}$$
+
+$$ \frac{\partial \chi^2(\alpha)}{\partial \alpha} = -2(y- \hat y)^TW\frac{\partial \hat y}{\partial \alpha} $$
+
+-   And $\frac{\partial \hat y}{\partial \alpha}$ is an Jacobian matrix $J$ and therefore be:
+
+$$ \frac{\partial \chi^2(\alpha)}{\partial \alpha} = -2(y- \hat y)^TWJ$$
+
+-   $-2(y-\hat y)^TWJ$ is also known as $-2J^TW(y-\hat y)$ because those two will returns the same output, only changing dimension of the output, from a 1 X n row vector to a n X 1 column vector.
+
+-   The equation above can be differently expressed as:
+
+$$
+\nabla_{\alpha} \chi^2(\alpha)  = \sum_{i=1}^n\frac{2(y_i-f(\alpha))(-\nabla_\alpha f(\alpha))}{\theta^2_i}
+$$
+
+## The parameter updating
+
+We start with an **initial guess** for the parameters, say $\alpha_{\text{old}}$ or $\theta_{\text{old}}$, and we want to update them to get closer to the optimal solution. The idea is to **move in the direction** that reduces the cost function (the "hill" we're trying to go down).
+
+Here’s how the update rule works:
+
+1.  **Start with the initial parameter**: $\alpha_{\text{old}}$ (or $\theta_{\text{old}}$) is our starting guess for the parameters. This is usually a random guess, but it doesn't have to be perfect at the beginning (but always better to start with **the best initial parameters**).
+
+2.  **Compute the gradient**: The **gradient** tells you the direction to move. It’s essentially the derivative of the cost function with respect to the parameter. In simpler terms, it’s like a slope of the hill that tells us whether we’re going uphill or downhill and how steep the slope is.
+
+    Mathematically, the gradient of the cost function $\chi^2$ with respect to the parameters $\alpha$ or $\theta$ is:
+
+    $$
+    \nabla_{\alpha} \chi^2(\alpha) \quad \text{or} \quad \nabla_\theta \chi^2(\theta)
+    $$
+
+    This gradient is a vector that points in the direction of **maximum increase** in the cost function. Since we want to **decrease** the cost, we move in the **opposite direction** (hence the negative sign).
+
+3.  **Update the parameters**: The rule for updating the parameters is:
+
+    $$
+    \alpha_{\text{new}} = \alpha_{\text{old}} - \eta \nabla_{\alpha} \chi^2(\alpha)
+    $$
+
+    or equivalently,
+
+    $$
+    \theta_{\text{new}} = \theta_{\text{old}} - \eta \nabla_\theta \chi^2(\theta)
+    $$
+
+    Here:
+
+-   $\eta$ is the **learning rate** (a scalar), which controls how large the update step is. If $\eta$ is too small, the steps are too tiny, and the optimization may take too long to converge. If $\eta$ is too large, the steps might overshoot, causing the optimization to miss the optimal solution.
+    -   $\nabla_{\alpha} \chi^2(\alpha)$ is the gradient of the cost function with respect to the parameters, which tells us the direction to move in.
+
+4.  **A More Specific Example** with $J^T W (y - \hat{y})$ (I prefer to use this term. Please refer to the **note** below):
+
+    $$
+    \nabla_\theta \chi^2(\theta) = -2 J^T W (y - \hat{y})
+    $$
+
+Where:
+
+-   $J$ is the **Jacobian matrix** of the model (it contains the partial derivatives of the model output with respect to the parameters).
+
+-   $W$ is a diagonal matrix with the weights $\frac{1}{\sigma_i^2}$ on the diagonal (these weights are used to account for uncertainties in the data).
+
+-   $y$ is the observed data, and $\hat{y}$ is the predicted model output.
+
+    So the update rule becomes:
+
+    $$
+    \theta_{\text{new}} = \theta_{\text{old}} + 2 J^T W (y - \hat{y})
+    $$
+
+    **Note**: The positive sign here is because the gradient we calculated has a negative sign, and by flipping it, we ensure that we're moving in the direction that reduces the cost.
+
+5.  **Introducing the Learning Rate**: As mentioned before, we typically introduce the **learning rate** $\eta$ to control the size of each step. So, the update rule becomes:
+
+    $$
+    \theta_{\text{new}} = \theta_{\text{old}} + \eta J^T W (y - \hat{y})
+    $$
+
+    Where:
+
+    -   $\eta$ is the learning rate, and it controls how much we change $\theta_{\text{old}}$ in each step.
+
+To summarize, we can update the parameter as:
+
+$$
+\theta_{\text{new}} = \theta_{\text{old}} + h_{\text{gd}} 
+$$\
+
+where,
+
+$$  
+h_{\text{gd}} = \eta J^TW(y-\hat y)
+$$
