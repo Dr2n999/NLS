@@ -747,10 +747,13 @@ Response = D+ \frac{A-D}{\left(1+\left(\frac{x}{c}\right)^B \right)^G}
 <span id="cb37-19"><a href="applying-the-lm-algorithm-to-lba-data.html#cb37-19" tabindex="-1"></a>mu <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(test.result<span class="fl">.2</span>, <span class="fu">aes</span>(Iteration, mu))<span class="sc">+</span></span>
 <span id="cb37-20"><a href="applying-the-lm-algorithm-to-lba-data.html#cb37-20" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha=</span>.<span class="dv">5</span>, <span class="at">size=</span>.<span class="dv">7</span>)<span class="sc">+</span></span>
 <span id="cb37-21"><a href="applying-the-lm-algorithm-to-lba-data.html#cb37-21" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">col=</span><span class="st">&quot;skyblue&quot;</span>)<span class="sc">+</span></span>
-<span id="cb37-22"><a href="applying-the-lm-algorithm-to-lba-data.html#cb37-22" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span>
+<span id="cb37-22"><a href="applying-the-lm-algorithm-to-lba-data.html#cb37-22" tabindex="-1"></a>  <span class="fu">theme_bw</span>()  </span>
 <span id="cb37-23"><a href="applying-the-lm-algorithm-to-lba-data.html#cb37-23" tabindex="-1"></a></span>
-<span id="cb37-24"><a href="applying-the-lm-algorithm-to-lba-data.html#cb37-24" tabindex="-1"></a><span class="fu">grid.arrange</span>(ARD, PRD, RE, CA, mu, <span class="at">nrow=</span><span class="dv">2</span>)</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-29-1.png" width="672" /></p>
+<span id="cb37-24"><a href="applying-the-lm-algorithm-to-lba-data.html#cb37-24" tabindex="-1"></a></span>
+<span id="cb37-25"><a href="applying-the-lm-algorithm-to-lba-data.html#cb37-25" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">grid.arrange</span>(ARD, PRD, RE, CA, mu, <span class="at">nrow=</span><span class="dv">2</span>)  </span>
+<span id="cb37-26"><a href="applying-the-lm-algorithm-to-lba-data.html#cb37-26" tabindex="-1"></a></span>
+<span id="cb37-27"><a href="applying-the-lm-algorithm-to-lba-data.html#cb37-27" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="fu">here</span>(<span class="st">&quot;result&quot;</span>, <span class="st">&quot;convergence.criteria.png&quot;</span>), <span class="at">plot=</span>p, <span class="at">dpi=</span><span class="dv">300</span>)</span></code></pre></div>
+<p><img src="result/convergence.criteria.png" /><!-- --></p>
 
 </div>
 </div>

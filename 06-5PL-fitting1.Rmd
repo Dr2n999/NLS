@@ -480,7 +480,7 @@ test.result.2 <- LM.custom.2(w, df_temp, 74)
 
 Finally, we can create figures to plot the convergence criteria values at each iteration:
 
-```{r}
+```{r, eval=F}
 ARD <- ggplot(test.result.2, aes(Iteration, ARD))+
   geom_point(alpha=.5, size=.7)+
   geom_line(col="red")+
@@ -502,7 +502,14 @@ CA <- ggplot(test.result.2, aes(Iteration, CA))+
 mu <- ggplot(test.result.2, aes(Iteration, mu))+
   geom_point(alpha=.5, size=.7)+
   geom_line(col="skyblue")+
-  theme_bw()
+  theme_bw()  
 
-grid.arrange(ARD, PRD, RE, CA, mu, nrow=2)
+
+p <- grid.arrange(ARD, PRD, RE, CA, mu, nrow=2)  
+
+ggsave(here("result", "convergence.criteria.png"), plot=p, dpi=300)
+```
+
+```{r, echo = F}
+knitr::include_graphics(here("result", "convergence.criteria.png"))
 ```
