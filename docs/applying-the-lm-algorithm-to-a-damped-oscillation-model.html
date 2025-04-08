@@ -289,7 +289,7 @@ y = A \cdot e^{(-\lambda \cdot x)} \cdot \cos(\omega \cdot x + \Phi) + C
 <li>The initial guesses for the parameters.</li>
 </ul>
 <p>Here’s how we do it:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb6-1" tabindex="-1"></a>f.do <span class="ot">&lt;-</span> <span class="cf">function</span>(x, A, Lambda, Omega, Pi, C){ <span class="do">## to calculate y to use x and parameters</span></span>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb6-1" tabindex="-1"></a>f.do <span class="ot">&lt;-</span> <span class="cf">function</span>(x, A, Lambda, Omega, Pi, C){ <span class="do">## to calculate y using x and parameters</span></span>
 <span id="cb6-2"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb6-2" tabindex="-1"></a>    y <span class="ot">&lt;-</span> A<span class="sc">*</span><span class="fu">exp</span>(<span class="sc">-</span>Lambda<span class="sc">*</span>x)<span class="sc">*</span><span class="fu">cos</span>(Omega<span class="sc">*</span>x<span class="sc">+</span>Pi)<span class="sc">+</span>C </span>
 <span id="cb6-3"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb6-3" tabindex="-1"></a>    y</span>
 <span id="cb6-4"><a href="applying-the-lm-algorithm-to-a-damped-oscillation-model.html#cb6-4" tabindex="-1"></a>}</span>
