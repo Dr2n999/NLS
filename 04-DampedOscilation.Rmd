@@ -72,17 +72,23 @@ w0 <- c(3, 0.1, 2*pi/5, 0.5, 1)  # Incorrect initial guess
 
 This initial guess will give us a poor fit to the data, as we can see below in the graph:
 
-```{r}
-
-ggplot(df_temp, aes(x, y)) +
+```{r, eval = F}
+d1 <- ggplot(df_temp, aes(x, y)) +
   geom_point() +
   stat_function(fun = function(x) w0[1] * exp(-w0[2] * x) * cos(w0[3] * x + w0[4]) + w0[5], col = "red", lty = 2) +
   theme_bw()
+ggsave(here("result", "poor.fit.png"), plot=d1, dpi=300)
 ```
 
-The **LM algorithm** will help us find the correct parameters that minimize the error between the observed data and the model prediction.
+```{r, echo = F}
+knitr::include_graphics(here("result", "poor.fit.png"))
+```  
 
-------------------------------------------------------------------------
+The **LM algorithm** will help us find the correct parameters that minimize the error between the observed data and the model prediction.  
+
+
+------------------------------------------------------------------------  
+
 
 ## Data fitting using nlsLM
 
@@ -117,15 +123,21 @@ n1
 
 Now, we can visualize the result. The optimized parameters (black line) fit the data much better than the initial guess (red line), as shown below:
 
-```{r}
-ggplot(df_temp, aes(x, y)) +
+```{r, eval = F}
+d2 <- ggplot(df_temp, aes(x, y)) +
   geom_point() +
   stat_function(fun = function(x) w0[1] * exp(-w0[2] * x) * cos(w0[3] * x + w0[4]) + w0[5], col = "red", lty = 2) +  # Initial guess
   stat_function(fun = function(x) n1[1] * exp(-n1[2] * x) * cos(n1[3] * x + n1[4]) + n1[5], col = "black", lty = 2) +  # Optimized result
   theme_bw()
+ggsave(here("result","good.fit.png"), plot=d2, dpi=300)
 ```
 
-------------------------------------------------------------------------
+
+```{r, echo = F}
+knitr::include_graphics(here("result", "good.fit.png"))
+```  
+
+------------------------------------------------------------------------  
 
 ## How the Algorithm Works
 
